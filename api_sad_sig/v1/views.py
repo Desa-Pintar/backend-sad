@@ -166,8 +166,8 @@ class SadKeluargaViewSet(DynamicModelViewSet):
         data = pandas.read_excel(file)
         for item in data.to_dict("records"):
             item["rt"] = SadRt.objects.get(id=item["rt"])
-            SadKeluarga.objects.create(**item)
-            SadKeluarga.save()
+            instance = SadKeluarga.objects.create(**item)
+            instance.save()
         return Response()
 
     @action(detail=False, methods=["get"])
@@ -198,8 +198,8 @@ class SadPendudukViewSet(CustomView):
         for item in data.dropna(axis=1).to_dict("records"):
             item["keluarga"] = SadKeluarga.objects.get(id=item["keluarga"])
 
-            SadPenduduk.objects.create(**item)
-            SadPenduduk.save()
+            instance = SadPenduduk.objects.create(**item)
+            instance.save()
 
         return Response()
 
