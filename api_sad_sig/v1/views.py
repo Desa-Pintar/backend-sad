@@ -176,6 +176,7 @@ class SadKeluargaViewSet(CustomView):
             item = SadKeluarga.objects.all()
             serializer = SadKeluargaSerializer(item, many=True)
             df = pandas.DataFrame(serializer.data)
+            df.reset_index(drop=True, inplace=True)
             df.to_excel(writer, sheet_name="Sheet1")
             writer.save()
             return HttpResponse(
