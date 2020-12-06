@@ -70,7 +70,8 @@ class CustomSerializer(DynamicModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        instance = self.Meta.model(created_by=user, **validated_data)
+        validated_data["created_by"] = user
+        instance = self.Meta.model(**validated_data)
         instance.save()
         return instance
 

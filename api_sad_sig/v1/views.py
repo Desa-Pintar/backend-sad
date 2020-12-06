@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.decorators import action
 from rest_framework.response import Response
+import numpy
 import pandas
 import json
 from io import BytesIO
@@ -162,13 +163,14 @@ class SadKeluargaViewSet(DynamicModelViewSet):
 
     @action(detail=False, methods=["post"])
     def upload(self, request):
+        print("file", request.FILES)
         file = request.FILES["file"]
         data = pandas.read_excel(file)
         for item in data.to_dict("records"):
-            item["rt"] = SadRt.objects.get(id=item["rt"])
+            item["rt"] = SadRt.objects.filter(rt=item["rt"]).first()
             instance = SadKeluarga.objects.create(**item)
             instance.save()
-        return Response()
+        return Response({"msg": "Data berhasil diupload"})
 
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
@@ -178,12 +180,21 @@ class SadKeluargaViewSet(DynamicModelViewSet):
             serializer = SadKeluargaSerializer(item, many=True)
             df = pandas.DataFrame(serializer.data)
             df.reset_index(drop=True, inplace=True)
-            df.to_excel(writer, sheet_name="Sheet1")
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
             writer.save()
             return HttpResponse(
                 b.getvalue(),
                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
+
+
+def format_data_penduduk(data):
+    cols = ["tgl_lahir", "tgl_exp_paspor", "tgl_kawin", "tgl_cerai"]
+    for col in cols:
+        if type(data[col]) == pandas.Timestamp:
+            data[col] = str(data[col]).split(" ")[0]
+        else:
+            data.pop(col)
 
 
 class SadPendudukViewSet(CustomView):
@@ -195,13 +206,17 @@ class SadPendudukViewSet(CustomView):
     def upload(self, request):
         file = request.FILES["file"]
         data = pandas.read_excel(file)
-        for item in data.dropna(axis=1).to_dict("records"):
-            item["keluarga"] = SadKeluarga.objects.get(id=item["keluarga"])
+        for item in data.to_dict("records"):
+            item["keluarga"] = SadKeluarga.objects.filter(
+                no_kk=item["keluarga"]
+            ).first()
+            format_data_penduduk(item)
+            print(item)
 
             instance = SadPenduduk.objects.create(**item)
             instance.save()
 
-        return Response()
+        return Response({"msg": "Data berhasil diupload"})
 
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
@@ -211,7 +226,7 @@ class SadPendudukViewSet(CustomView):
             serializer = SadPendudukSerializer(item, many=True)
             df = pandas.DataFrame(serializer.data)
             df.reset_index(drop=True, inplace=True)
-            df.to_excel(writer, sheet_name="Sheet1")
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
             writer.save()
             return HttpResponse(
                 b.getvalue(),
