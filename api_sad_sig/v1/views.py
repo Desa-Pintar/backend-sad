@@ -155,7 +155,7 @@ class SadRtViewSet(CustomView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class SadKeluargaViewSet(CustomView):
+class SadKeluargaViewSet(DynamicModelViewSet):
     queryset = SadKeluarga.objects.all().order_by("id")
     serializer_class = SadKeluargaSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -167,6 +167,7 @@ class SadKeluargaViewSet(CustomView):
         for item in data.to_dict("records"):
             item["rt"] = SadRt.objects.get(id=item["rt"])
             SadKeluarga.objects.create(**item)
+            SadKeluarga.save()
         return Response()
 
     @action(detail=False, methods=["get"])
@@ -198,6 +199,7 @@ class SadPendudukViewSet(CustomView):
             item["keluarga"] = SadKeluarga.objects.get(id=item["keluarga"])
 
             SadPenduduk.objects.create(**item)
+            SadPenduduk.save()
 
         return Response()
 
@@ -208,6 +210,7 @@ class SadPendudukViewSet(CustomView):
             item = SadPenduduk.objects.all()
             serializer = SadPendudukSerializer(item, many=True)
             df = pandas.DataFrame(serializer.data)
+            df.reset_index(drop=True, inplace=True)
             df.to_excel(writer, sheet_name="Sheet1")
             writer.save()
             return HttpResponse(
