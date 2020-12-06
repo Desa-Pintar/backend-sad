@@ -37,6 +37,28 @@ class CustomModel(models.Model):
     updated_at = models.DateTimeField(blank=True, auto_now=True, null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
 
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        related_name="created_%(class)ss",
+        blank=True,
+        null=True,
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        related_name="updated_%(class)ss",
+    )
+    deleted_by = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        related_name="deleted_%(class)ss",
+    )
+
     # Untuk query object hidup gunakan model_name.objects
     # Untuk query semua object gunakan model.all_objects
     objects = CustomModelManager()
@@ -164,30 +186,6 @@ class SadKeluarga(CustomModel):
     )
     penghasil = models.IntegerField(blank=True, null=True)
     status_kk = models.CharField(max_length=20, blank=True, null=True)
-    created_by = models.ForeignKey(
-        User,
-        models.DO_NOTHING,
-        db_column="created_by",
-        blank=True,
-        null=True,
-        related_name="keluarga_create_by",
-    )
-    updated_by = models.ForeignKey(
-        User,
-        models.DO_NOTHING,
-        db_column="updated_by",
-        blank=True,
-        null=True,
-        related_name="keluarga_update_by",
-    )
-    deleted_by = models.ForeignKey(
-        User,
-        models.DO_NOTHING,
-        db_column="deleted_by",
-        blank=True,
-        null=True,
-        related_name="keluarga_delete_by",
-    )
 
     class Meta(CustomModel.Meta):
 
