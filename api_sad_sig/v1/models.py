@@ -464,7 +464,7 @@ class SigBidang2(CustomModel):
 
 
 class SigDesa(CustomModel):
-    nama_desa = models.CharField(max_length=250, primary_key=True)
+    nama_desa = models.CharField(max_length=250)
     luas = models.CharField(max_length=10, blank=True, null=True)
     keliling = models.CharField(max_length=10, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
@@ -478,7 +478,7 @@ class SigDusun(CustomModel):
     sig_desa = models.ForeignKey(
         SigDesa, models.DO_NOTHING, blank=True, null=True
     )
-    nama_dusun = models.CharField(max_length=70, primary_key=True)
+    nama_dusun = models.CharField(max_length=70)
     luas = models.CharField(max_length=10, blank=True, null=True)
     keliling = models.CharField(max_length=10, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
