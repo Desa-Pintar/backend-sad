@@ -38,6 +38,8 @@ from .models import (
   Informasi,
   KategoriPotensi,
   Potensi,
+  KategoriLapor,
+  Lapor,
 )
 
 class GroupSerializer(DynamicModelSerializer):
@@ -272,6 +274,19 @@ class KategoriInformasiSerializer(DynamicModelSerializer):
 class KategoriPotensiSerializer(DynamicModelSerializer):
   class Meta:
     model = KategoriPotensi
+    name = 'data'
+    exclude = []
+
+class KategoriLaporSerializer(DynamicModelSerializer):
+  class Meta:
+    model = KategoriLapor
+    name = 'data'
+    exclude = []
+
+class LaporSerializer(DynamicModelSerializer):
+  kategori = DynamicRelationField('KategoriLaporSerializer', deferred=True, embed=True)
+  class Meta:
+    model = Lapor
     name = 'data'
     exclude = []
 

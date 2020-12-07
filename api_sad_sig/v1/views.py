@@ -40,6 +40,16 @@ from .serializers import (
   SigDukuh2Serializer,
   SigRt2Serializer,
   SigRw2Serializer,
+  KategoriLaporSerializer,
+  LaporSerializer,
+  KategoriArtikelSerializer,
+  ArtikelSerializer,
+  KategoriPotensiSerializer,
+  PotensiSerializer,
+  KategoriInformasiSerializer,
+  InformasiSerializer,
+  PotensiSerializer,
+  KategoriPotensiSerializer,
 )
 
 from .models import (
@@ -71,6 +81,14 @@ from .models import (
   SigDukuh2,
   SigRt2,
   SigRw2,
+  KategoriLapor,
+  Lapor,
+  Artikel,
+  KategoriArtikel,
+  Informasi,
+  KategoriInformasi,
+  Potensi,
+  KategoriPotensi,
 )
 
 
@@ -399,3 +417,43 @@ class SigRt2ViewSet(DynamicModelViewSet):
       }
       SigRt2.objects.create(**item)
     return Response()
+
+class KategoriArtikelViewSet(DynamicModelViewSet):
+  queryset = KategoriArtikel.objects.all().order_by('id')
+  serializer_class = KategoriArtikelSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class ArtikelViewSet(DynamicModelViewSet):
+  queryset = Artikel.objects.all().order_by('id')
+  serializer_class = ArtikelSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class KategoriLaporViewSet(DynamicModelViewSet):
+  queryset = KategoriLapor.objects.all().order_by('id')
+  serializer_class = KategoriLaporSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class LaporViewSet(DynamicModelViewSet):
+  queryset = Lapor.objects.all().order_by('id')
+  serializer_class = LaporSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class KategoriInformasiViewSet(DynamicModelViewSet):
+  queryset = KategoriInformasi.objects.all().order_by('id')
+  serializer_class = KategoriInformasiSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class InformasiViewSet(DynamicModelViewSet):
+  queryset = Informasi.objects.all().order_by('id')
+  serializer_class = InformasiSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class KategoriPotensiViewSet(DynamicModelViewSet):
+  queryset = KategoriPotensi.objects.all().order_by('id')
+  serializer_class = KategoriPotensiSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+class PotensiViewSet(DynamicModelViewSet):
+  queryset = Potensi.objects.all().order_by('id')
+  serializer_class = PotensiSerializer
+  permission_classes = [permissions.IsAuthenticated]
