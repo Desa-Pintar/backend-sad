@@ -500,8 +500,62 @@ class SigSadBidang2(models.Model):
 class Slider(models.Model):
     judul = models.CharField(max_length=100, blank=True, null=True)
     deskripsi = models.TextField(blank=True, null=True)
-    gambar = models.BinaryField(blank=True, null=True)
+    gambar = models.TextField(blank=True, null=True)
 
     class Meta:
         
         db_table = 'slider'
+
+class KategoriArtikel(models.Model):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        
+        db_table = 'KategoriArtikel'
+
+class Artikel(models.Model):
+    kategori = models.ForeignKey(KategoriArtikel, models.DO_NOTHING, blank=True, null=True)
+    judul = models.CharField(max_length=100, blank=True, null=True)
+    isi = models.TextField(blank=True, null=True)
+    gambar = models.TextField(blank=True, null=True)
+
+    class Meta:
+        
+        db_table = 'Artikel'
+
+class KategoriPotensi(models.Model):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        
+        db_table = 'KategoriPotensi'
+
+class Potensi(models.Model):
+    kategori = models.ForeignKey(KategoriPotensi, models.DO_NOTHING, blank=True, null=True)
+    judul = models.CharField(max_length=100, blank=True, null=True)
+    isi = models.TextField(blank=True, null=True)
+    geometry = models.TextField(blank=True, null=True)
+    gambar = models.TextField(blank=True, null=True)
+
+    class Meta:
+        
+        db_table = 'Potensi'
+
+class KategoriInformasi(models.Model):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        
+        db_table = 'KategoriInformasi'
+
+class Informasi(models.Model):
+    kategori = models.ForeignKey(KategoriInformasi, models.DO_NOTHING, blank=True, null=True)
+    judul = models.CharField(max_length=100, blank=True, null=True)
+    tempat = models.CharField(max_length=100, blank=True, null=True)
+    tanggal = models.DateField(blank=True, null=True)
+    mulai = models.CharField(max_length=10, blank=True, null=True)
+    selesai = models.CharField(max_length=10, blank=True, null=True)
+
+    class Meta:
+        
+        db_table = 'Informasi'

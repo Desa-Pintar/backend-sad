@@ -31,6 +31,13 @@ from .models import (
   SigDusun,
   SigDukuh,
   SigDukuh2,
+  Slider,
+  KategoriArtikel,
+  Artikel,
+  KategoriInformasi,
+  Informasi,
+  KategoriPotensi,
+  Potensi,
 )
 
 class GroupSerializer(DynamicModelSerializer):
@@ -241,5 +248,50 @@ class SigBidangSerializer(DynamicModelSerializer):
   desa = DynamicRelationField('SigDesaSerializer', deferred=True, embed=True)
   class Meta:
     model = SigBidang
+    name = 'data'
+    exclude = []
+
+class SliderSerializer(DynamicModelSerializer):
+  class Meta:
+    model = Slider
+    name = 'data'
+    exclude = []
+
+class KategoriArtikelSerializer(DynamicModelSerializer):
+  class Meta:
+    model = KategoriArtikel
+    name = 'data'
+    exclude = []
+
+class KategoriInformasiSerializer(DynamicModelSerializer):
+  class Meta:
+    model = KategoriInformasi
+    name = 'data'
+    exclude = []
+
+class KategoriPotensiSerializer(DynamicModelSerializer):
+  class Meta:
+    model = KategoriPotensi
+    name = 'data'
+    exclude = []
+
+class ArtikelSerializer(DynamicModelSerializer):
+  kategori = DynamicRelationField('KategoriArtikelSerializer', deferred=True, embed=True)
+  class Meta:
+    model = Artikel
+    name = 'data'
+    exclude = []
+
+class InformasiSerializer(DynamicModelSerializer):
+  kategori = DynamicRelationField('KategoriInformasiSerializer', deferred=True, embed=True)
+  class Meta:
+    model = Informasi
+    name = 'data'
+    exclude = []
+
+class PotensiSerializer(DynamicModelSerializer):
+  kategori = DynamicRelationField('KategoriPotensiSerializer', deferred=True, embed=True)
+  class Meta:
+    model = Potensi
     name = 'data'
     exclude = []
