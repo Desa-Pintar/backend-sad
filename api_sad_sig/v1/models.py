@@ -177,7 +177,7 @@ class SadRw(CustomModel):
 
 
 class SadKeluarga(CustomModel):
-    no_kk = models.CharField(max_length=16, primary_key=True)
+    no_kk = models.CharField(max_length=16, unique=True)
     alamat = models.CharField(max_length=100, blank=True, null=True)
     rt = models.ForeignKey("SadRt", models.DO_NOTHING, blank=True, null=True)
     kode_pos = models.CharField(max_length=5, blank=True, null=True)
@@ -202,7 +202,7 @@ class SadPenduduk(CustomModel):
         null=True,
     )
 
-    nik = models.CharField(max_length=16, primary_key=True)
+    nik = models.CharField(max_length=16, unique=True)
     chip_ektp = models.CharField(max_length=10, blank=True, null=True)
     nama = models.CharField(max_length=50, blank=True, null=True)
     tgl_lahir = models.DateField(blank=True, null=True)
@@ -464,7 +464,7 @@ class SigBidang2(CustomModel):
 
 
 class SigDesa(CustomModel):
-    nama_desa = models.CharField(max_length=250)
+    nama_desa = models.CharField(max_length=250, blank=True, null=True)
     luas = models.CharField(max_length=10, blank=True, null=True)
     keliling = models.CharField(max_length=10, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
@@ -478,7 +478,7 @@ class SigDusun(CustomModel):
     sig_desa = models.ForeignKey(
         SigDesa, models.DO_NOTHING, blank=True, null=True
     )
-    nama_dusun = models.CharField(max_length=70)
+    nama_dusun = models.CharField(max_length=70, blank=True, null=True)
     luas = models.CharField(max_length=10, blank=True, null=True)
     keliling = models.CharField(max_length=10, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
