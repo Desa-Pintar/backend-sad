@@ -8,7 +8,7 @@ from .models import (
   SadKabKota,
   SadKecamatan,
   SadDesa,
-  SadDusunDukuh,
+  SadDusun,
   SadRw,
   SadRt,
   SadKeluarga,
@@ -100,21 +100,21 @@ class PegawaiSerializer(CustomSerializer):
     class Meta:
         model = Pegawai
         name = "data"
-        fields = ["id", "nama", "jabatan"]
+        exclude = []
 
 
 class SadProvinsiSerializer(CustomSerializer):
     class Meta:
         model = SadProvinsi
         name = "data"
-        fields = ["id", "kode_provinsi", "nama_provinsi"]
+        exclude = []
 
 
 class SadKabKotaSerializer(CustomSerializer):
     class Meta:
         model = SadKabKota
         name = "data"
-        fields = ["id", "provinsi", "kode_kab_kota", "nama_kab_kota"]
+        exclude = []
 
 
 class SadKecamatanSerializer(CustomSerializer):
@@ -125,7 +125,7 @@ class SadKecamatanSerializer(CustomSerializer):
     class Meta:
         model = SadKecamatan
         name = "data"
-        fields = ["id", "kode_kecamatan", "nama_kecamatan", "kab_kota"]
+        exclude = []
 
 
 class SadDesaSerializer(CustomSerializer):
@@ -136,28 +136,38 @@ class SadDesaSerializer(CustomSerializer):
     class Meta:
         model = SadDesa
         name = "data"
-        fields = ["id", "kode_desa", "nama_desa", "kecamatan"]
+        exclude = []
 
 
-class SadDusunDukuhSerializer(CustomSerializer):
+class SadDusunSerializer(CustomSerializer):
+    desa = DynamicRelationField(
+        "SadDesaSerializer", deferred=False, embed=True
+    )
+
     class Meta:
-        model = SadDusunDukuh
+        model = SadDusun
         name = "data"
-        fields = ["id", "nama"]
+        exclude = []
 
 
 class SadRwSerializer(CustomSerializer):
+    dusun = DynamicRelationField(
+        "SadDusunSerializer", deferred=False, embed=True
+    )
     class Meta:
         model = SadRw
         name = "data"
-        fields = ["id", "rw"]
+        exclude = []
 
 
 class SadRtSerializer(CustomSerializer):
+    rw = DynamicRelationField(
+        "SadRwSerializer", deferred=False, embed=True
+    )
     class Meta:
         model = SadRt
         name = "data"
-        fields = ["id", "rt"]
+        exclude = []
 
 
 class SadKeluargaSerializer(CustomSerializer):

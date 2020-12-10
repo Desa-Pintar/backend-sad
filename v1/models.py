@@ -150,17 +150,13 @@ class SadDesa(CustomModel):
         db_table = "sad_desa"
 
 
-class SadDusunDukuh(CustomModel):
-    desa_id = models.IntegerField(blank=True, null=True)
-    tipe = models.CharField(max_length=5, blank=True, null=True)
+class SadDusun(CustomModel):
+    desa = models.ForeignKey("SadDesa", models.DO_NOTHING, blank=True, null=True)
     nama = models.CharField(max_length=70, blank=True, null=True)
-    dusun_dukuh = models.ForeignKey(
-        "self", models.DO_NOTHING, blank=True, null=True
-    )
 
     class Meta(CustomModel.Meta):
 
-        db_table = "sad_dusun_dukuh"
+        db_table = "sad_dusun"
 
 
 class SadRt(CustomModel):
@@ -173,10 +169,9 @@ class SadRt(CustomModel):
 
 
 class SadRw(CustomModel):
-    dusun_dukuh = models.ForeignKey(
-        SadDusunDukuh, models.DO_NOTHING, blank=True, null=True
+    dusun = models.ForeignKey(
+        SadDusun, models.DO_NOTHING, blank=True, null=True
     )
-    desa_id = models.IntegerField(blank=True, null=True)
     rw = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta(CustomModel.Meta):
@@ -216,6 +211,7 @@ class SadPenduduk(CustomModel):
     tgl_lahir = models.DateField(blank=True, null=True)
     tempat_lahir = models.CharField(max_length=50, blank=True, null=True)
     jk = models.CharField(max_length=12, blank=True, null=True)
+    alamat = models.CharField(max_length=100, blank=True, null=True)
     agama = models.CharField(max_length=20, blank=True, null=True)
     pendidikan = models.CharField(max_length=20, blank=True, null=True)
     pekerjaan = models.CharField(max_length=50, blank=True, null=True)
@@ -642,6 +638,7 @@ class Artikel(models.Model):
     kategori = models.ForeignKey(
         KategoriArtikel, models.DO_NOTHING, blank=True, null=True
     )
+    tgl = models.DateField(blank=True, null=True)
     judul = models.CharField(max_length=100, blank=True, null=True)
     isi = models.TextField(blank=True, null=True)
     gambar = models.ImageField(

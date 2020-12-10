@@ -21,7 +21,7 @@ from .serializers import (
     SadKabKotaSerializer,
     SadKecamatanSerializer,
     SadDesaSerializer,
-    SadDusunDukuhSerializer,
+    SadDusunSerializer,
     SadRwSerializer,
     SadRtSerializer,
     SadKeluargaSerializer,
@@ -60,7 +60,7 @@ from .models import (
     SadKabKota,
     SadKecamatan,
     SadDesa,
-    SadDusunDukuh,
+    SadDusun,
     SadRw,
     SadRt,
     SadKeluarga,
@@ -178,9 +178,9 @@ class SadDesaViewSet(CustomView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class SadDusunDukuhViewSet(CustomView):
-    queryset = SadDusunDukuh.objects.all().order_by("id")
-    serializer_class = SadDusunDukuhSerializer
+class SadDusunViewSet(CustomView):
+    queryset = SadDusun.objects.all().order_by("id")
+    serializer_class = SadDusunSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
