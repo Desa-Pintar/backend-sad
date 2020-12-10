@@ -26,6 +26,8 @@ from .views import (
   SadSuratViewSet,
   SadDetailSuratViewSet,
   SigBidangViewSet,
+  SigSadBidangViewSet,
+  SigSadBidang2ViewSet,
   SigDesaViewSet,
   SigDusunViewSet,
   SigDukuhViewSet,
@@ -67,6 +69,8 @@ router.register(r'inventaris', SadInventarisViewSet)
 router.register(r'surat', SadSuratViewSet)
 router.register(r'detailsurat', SadDetailSuratViewSet)
 router.register(r'sigbidang', SigBidangViewSet)
+router.register(r'sigsadbidang', SigSadBidangViewSet)
+router.register(r'sigsadbidang2', SigSadBidang2ViewSet)
 router.register(r'sigdesa', SigDesaViewSet)
 router.register(r'sigdusun', SigDusunViewSet)
 router.register(r'sigdukuh', SigDukuhViewSet)

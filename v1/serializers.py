@@ -22,6 +22,8 @@ from .models import (
   SadInventaris,
   SadSurat,
   SadDetailSurat,
+  SigSadBidang,
+  SigSadBidang2,
   SigBidang,
   SigDesa,
   SigRw,
@@ -349,6 +351,24 @@ class SigBidangSerializer(CustomSerializer):
 
     class Meta:
         model = SigBidang
+        name = "data"
+        exclude = []
+
+class SigSadBidangSerializer(CustomSrializer):
+    sad_penduduk = DynamicRelationField("SadPendudukSerializer", deferred=True, embed=True)
+    sig_bidang = DynamicRelationField("SigBidangSerializer", deferred=True, embed=True)
+
+    class Meta:
+        model = SigSadBidang
+        name = "data"
+        exclude = []
+
+class SigSadBidang2Serializer(CustomSrializer):
+    sad_penduduk = DynamicRelationField("SadPendudukSerializer", deferred=True, embed=True)
+    sig_bidang2 = DynamicRelationField("SigBidang2Serializer", deferred=True, embed=True)
+
+    class Meta:
+        model = SigSadBidang2
         name = "data"
         exclude = []
 

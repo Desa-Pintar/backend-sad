@@ -36,6 +36,8 @@ from .serializers import (
     SadSuratSerializer,
     SadDetailSuratSerializer,
     SigBidangSerializer,
+    SigSadBidangSerializer,
+    SigSadBidang2Serializer,
     SigDesaSerializer,
     SigRtSerializer,
     SigRwSerializer,
@@ -75,6 +77,8 @@ from .models import (
     SadSurat,
     SadDetailSurat,
     SigBidang,
+    SigSadBidang,
+    SigSadBidang2,
     SigDesa,
     SigRt,
     SigRw,
@@ -370,6 +374,15 @@ class SadDetailSuratViewSet(CustomView):
     serializer_class = SadDetailSuratSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+class SigSadBidangViewSet(CustomView):
+    queryset = SigSadBidang.objects.all().order_by("id")
+    serializer_class = SigSadBidangSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class SigSadBidang2ViewSet(CustomView):
+    queryset = SigSadBidang2.objects.all().order_by("id")
+    serializer_class = SigSadBidang2Serializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class SigBidangViewSet(CustomView):
     queryset = SigBidang.objects.all().order_by("id")
