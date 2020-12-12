@@ -1,4 +1,3 @@
-from django.urls import include, path
 from rest_framework import routers
 
 from .views import (
@@ -47,8 +46,6 @@ from .views import (
 )
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'groups', GroupViewSet)
 router.register(r'pegawai', PegawaiViewSet)
 router.register(r'provinsi', SadProvinsiViewSet)
 router.register(r'kabkota', SadKabKotaViewSet)
@@ -83,13 +80,7 @@ router.register(r'kategorilapor', KategoriLaporViewSet)
 router.register(r'kategoriinformasi', KategoriInformasiViewSet)
 router.register(r'kategoriartikel', KategoriArtikelViewSet)
 router.register(r'kategoripotensi', KategoriPotensiViewSet)
-router.register(r'artikel', ArtikelViewSet),
-router.register(r'informasi', InformasiViewSet),
-router.register(r'potensi', PotensiViewSet),
-router.register(r'lapor', LaporViewSet),
-
-urlpatterns = [
-    path("", include(router.urls)),
-    path("token/", TokenObtainPairView.as_view()),
-    path("token/refresh/", TokenRefreshView.as_view()),
-]
+router.register(r'artikel', ArtikelViewSet)
+router.register(r'informasi', InformasiViewSet)
+router.register(r'potensi', PotensiViewSet)
+router.register(r'lapor', LaporViewSet)
