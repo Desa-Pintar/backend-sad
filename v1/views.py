@@ -189,11 +189,11 @@ class SadKeluargaViewSet(DynamicModelViewSet):
 
         file = request.FILES["file"]
         data = pandas.read_excel(file)
-        for item in data.to_dict("records"):
-            if item["no_kk"] in [None, "", "0", 0]:
-                status["data_gagal"] += 1
-                continue
+        if data[['no_kk', 'rt']].isna().values().any:
+            message = 'Silahkan lengkapi data no_kk dan rt'
+            return Response({'message': message}, status=400)
 
+        for item in data.to_dict("records"):
             rt = SadRt.objects.filter(rt=item["rt"]).first()
             item["rt"] = rt
             if not item["rt"]:
@@ -206,7 +206,7 @@ class SadKeluargaViewSet(DynamicModelViewSet):
             except IntegrityError:
                 status["data_redundan"] += 1
                 continue
-            except Exception as e:
+            except Exception:
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
@@ -250,11 +250,10 @@ class SadPendudukViewSet(CustomView):
 
         file = request.FILES["file"]
         data = pandas.read_excel(file)
+        if data[['nik', 'keluarga', 'nama']].isna().values.any():
+            message = 'Silahkan lengkapi data nik, keluarga dan nama'
+            return Response({'message': message}, status=400)
         for item in data.to_dict("records"):
-            if not item["nik"]:
-                status["data_gagal"] += 1
-                continue
-
             item["keluarga"] = SadKeluarga.objects.filter(
                 no_kk=item["keluarga"]
             ).first()
@@ -269,7 +268,7 @@ class SadPendudukViewSet(CustomView):
             except IntegrityError:
                 status["data_redundan"] += 1
                 continue
-            except Exception as e:
+            except Exception:
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
