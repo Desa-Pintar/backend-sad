@@ -1,12 +1,15 @@
-from django.db import IntegrityError
 from rest_framework import permissions, status
+from django.db import IntegrityError
+from django.http import HttpResponse
 from dynamic_rest.viewsets import DynamicModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from django.contrib.auth.models import User, Group
+
 import pandas
 import json
 from io import BytesIO
-from django.http import HttpResponse
 
 from users.permissions import IsAdminUserOrReadOnly
 from .serializers import (
@@ -114,6 +117,21 @@ def create_or_reactivate(model, filter_param, data):
     else:
         instance = model.objects.create(**data)
     instance.save()
+
+
+def create_or_reactivate_user(username, password):
+    user = User.objects.filter(username=username).first()
+    group = Group.objects.get(name='penduduk')
+
+    if not user:
+        user = User.objects.create(username=username)
+        user.set_password(password)
+        user.groups.add(group)
+        user.save()
+    elif not user.is_active:
+        user.is_active = True
+        user.set_password(password)
+        user.save()
 
 
 class CustomView(DynamicModelViewSet):
@@ -272,6 +290,11 @@ class SadPendudukViewSet(CustomView):
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
+
+            create_or_reactivate_user(
+                item['nik'], item['tgl_lahir'].replace('-', '')
+            )
+
         if not status["data_diinput"]:
             status["status"] = "failed"
         return Response(status)
