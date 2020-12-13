@@ -1,12 +1,15 @@
-from django.db import IntegrityError
 from rest_framework import permissions, status
+from django.db import IntegrityError
+from django.http import HttpResponse
 from dynamic_rest.viewsets import DynamicModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from django.contrib.auth.models import User, Group
+
 import pandas
 import json
 from io import BytesIO
-from django.http import HttpResponse
 
 from users.permissions import IsAdminUserOrReadOnly
 from .serializers import (
@@ -116,6 +119,21 @@ def create_or_reactivate(model, filter_param, data):
     instance.save()
 
 
+def create_or_reactivate_user(username, password):
+    user = User.objects.filter(username=username).first()
+    group = Group.objects.get(name='penduduk')
+
+    if not user:
+        user = User.objects.create(username=username)
+        user.set_password(password)
+        user.groups.add(group)
+        user.save()
+    elif not user.is_active:
+        user.is_active = True
+        user.set_password(password)
+        user.save()
+
+
 class CustomView(DynamicModelViewSet):
     def destroy(self, request, pk, format=None):
         data = self.get_object()
@@ -189,10 +207,11 @@ class SadKeluargaViewSet(DynamicModelViewSet):
 
         file = request.FILES["file"]
         data = pandas.read_excel(file)
+        if data[['no_kk', 'rt']].isna().values().any:
+            message = 'Silahkan lengkapi data no_kk dan rt'
+            return Response({'message': message}, status=400)
+
         for item in data.to_dict("records"):
-            if item["no_kk"] in [None, "", "0", 0]:
-                status["data_gagal"] += 1
-                continue
 
             rt = SadRt.objects.filter(rt=item["rt"]).first()
             item["rt"] = rt
@@ -206,7 +225,8 @@ class SadKeluargaViewSet(DynamicModelViewSet):
             except IntegrityError:
                 status["data_redundan"] += 1
                 continue
-            except Exception as e:
+            except Exception:
+
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
@@ -250,29 +270,34 @@ class SadPendudukViewSet(CustomView):
 
         file = request.FILES["file"]
         data = pandas.read_excel(file)
-        for item in data.to_dict("records"):
-            if not item["nik"]:
-                status["data_gagal"] += 1
-                continue
+        if data[['nik', 'keluarga', 'nama']].isna().values.any():
+            message = 'Silahkan lengkapi data nik, keluarga dan nama'
+            return Response({'message': message}, status=400)
 
-            item["keluarga"] = SadKeluarga.objects.filter(
-                no_kk=item["keluarga"]
-            ).first()
-            if not item["keluarga"]:
-                status["keluarga_tidak_ditemukan"] += 1
-                continue
+            for item in data.to_dict('record'):
+                item["keluarga"] = SadKeluarga.objects.filter(
+                    no_kk=item["keluarga"]
+                ).first()
+                if not item["keluarga"]:
+                    status["keluarga_tidak_ditemukan"] += 1
+                    continue
 
-            format_data_penduduk(item)
-            param_filter = {"nik": item["nik"]}
-            try:
-                create_or_reactivate(SadPenduduk, param_filter, item)
-            except IntegrityError:
-                status["data_redundan"] += 1
-                continue
-            except Exception as e:
-                status["data_gagal"] += 1
-                continue
-            status["data_diinput"] += 1
+                format_data_penduduk(item)
+                param_filter = {"nik": item["nik"]}
+                try:
+                    create_or_reactivate(SadPenduduk, param_filter, item)
+                except IntegrityError:
+                    status["data_redundan"] += 1
+                    continue
+                except Exception:
+                    status["data_gagal"] += 1
+                    continue
+                status["data_diinput"] += 1
+
+                create_or_reactivate_user(
+                    item['nik'], item['tgl_lahir'].replace('-', '')
+                )
+
         if not status["data_diinput"]:
             status["status"] = "failed"
         return Response(status)
@@ -359,6 +384,7 @@ class SigSadBidangViewSet(CustomView):
 class SigSadBidang2ViewSet(CustomView):
     queryset = SigSadBidang2.objects.all().order_by("id")
     serializer_class = SigSadBidang2Serializer
+
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -373,9 +399,7 @@ class SigBidangViewSet(CustomView):
         data = json.load(file)
 
         for item in data["features"]:
-            rt = SigRt.objects.get(
-                rt=item["properties"]["RT"]
-            )
+            rt = SigRt.objects.get(rt=item["properties"]["RT"])
             item = {
                 "sig_rt": rt,
                 "nbt": item["properties"]["NBT"],
