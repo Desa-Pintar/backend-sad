@@ -609,7 +609,7 @@ class ArtikelViewSet(DynamicModelViewSet):
 class KategoriLaporViewSet(DynamicModelViewSet):
     queryset = KategoriLapor.objects.all().order_by("id")
     serializer_class = KategoriLaporSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class LaporViewSet(DynamicModelViewSet):
@@ -639,4 +639,4 @@ class KategoriPotensiViewSet(DynamicModelViewSet):
 class PotensiViewSet(DynamicModelViewSet):
     queryset = Potensi.objects.all().order_by("id")
     serializer_class = PotensiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
