@@ -740,7 +740,7 @@ class Lapor(models.Model):
         db_table = "Lapor"
 
 
-class SuratDomisili(models.Model):
+class SuratDomisili(CustomModel):
     no_surat = models.CharField(max_length=50, blank=True, null=True)
     pegawai = models.ForeignKey(
         Pegawai, models.DO_NOTHING, blank=True, null=True
@@ -751,7 +751,7 @@ class SuratDomisili(models.Model):
     keperluan = models.TextField(blank=True, null=True)
 
 
-class SuratSkck(models.Model):
+class SuratSkck(CustomModel):
     no_surat = models.CharField(max_length=50, blank=True, null=True)
     pegawai = models.ForeignKey(
         Pegawai, models.DO_NOTHING, blank=True, null=True
