@@ -731,7 +731,8 @@ class Lapor(models.Model):
     class Meta:
 
         db_table = "Lapor"
-        
+
+
 class SuratDomisili(models.Model):
     no_surat = models.CharField(max_length=50, blank=True, null=True)
     pegawai = models.ForeignKey(
@@ -755,11 +756,12 @@ class SuratSkck(models.Model):
     keperluan = models.TextField(blank=True, null=True)
 
 
-class SuratKelahiran(models.Model):
+class SuratKelahiran(CustomModel):
     no_surat = models.CharField(max_length=50, blank=True, null=True)
     pegawai = models.ForeignKey(
         Pegawai,
         models.DO_NOTHING,
+        related_name='acc_surat_kelahiran',
         blank=True,
         null=True,
     )
@@ -801,4 +803,3 @@ class SuratKelahiran(models.Model):
     penolong_kelahiran = models.CharField(max_length=15, blank=True, null=True)
     berat = models.CharField(max_length=15, blank=True, null=True)
     panjang = models.CharField(max_length=15, blank=True, null=True)
-

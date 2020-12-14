@@ -12,6 +12,7 @@ import json
 from io import BytesIO
 
 from users.permissions import IsAdminUserOrReadOnly
+from .utils import render_mail
 from .serializers import (
     PegawaiSerializer,
     SadProvinsiSerializer,
@@ -51,6 +52,8 @@ from .serializers import (
     PotensiSerializer,
     KategoriInformasiSerializer,
     InformasiSerializer,
+    SuratKelahiranSerializer,
+    AdminSuratKelahiranSerializer,
 )
 
 from .models import (
@@ -92,6 +95,7 @@ from .models import (
     KategoriInformasi,
     Potensi,
     KategoriPotensi,
+    SuratKelahiran,
 )
 
 
@@ -640,3 +644,19 @@ class PotensiViewSet(DynamicModelViewSet):
     queryset = Potensi.objects.all().order_by("id")
     serializer_class = PotensiSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class SuratKelahiranViewSet(DynamicModelViewSet):
+    queryset = SuratKelahiran.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.user.groups.first().name == 'admin':
+            return AdminSuratKelahiranSerializer
+        return SuratKelahiranSerializer
+
+    @action(detail=True, methods=["get"])
+    def print(self, request, pk=None):
+        data = self.get_object()
+        pdf = render_mail(data)
+        return HttpResponse(pdf, content_type='application/pdf')
