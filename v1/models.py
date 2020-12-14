@@ -750,6 +750,9 @@ class SuratDomisili(CustomModel):
     )
     keperluan = models.TextField(blank=True, null=True)
 
+    class Meta:
+        db_table = "surat_domisili"
+
 
 class SuratSkck(CustomModel):
     no_surat = models.CharField(max_length=50, blank=True, null=True)
@@ -761,6 +764,9 @@ class SuratSkck(CustomModel):
     )
     keterangan = models.TextField(blank=True, null=True)
     keperluan = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = "surat_skck"
 
 
 class SuratKelahiran(CustomModel):
@@ -810,3 +816,6 @@ class SuratKelahiran(CustomModel):
     penolong_kelahiran = models.CharField(max_length=15, blank=True, null=True)
     berat = models.CharField(max_length=15, blank=True, null=True)
     panjang = models.CharField(max_length=15, blank=True, null=True)
+
+    class Meta:
+        db_table = "surat_kelahiran"
