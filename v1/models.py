@@ -206,6 +206,13 @@ class SadPenduduk(CustomModel):
         blank=True,
         null=True,
     )
+    user = models.OneToOneField(
+        User,
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        related_name='profile',
+    )
 
     nik = models.CharField(max_length=16, unique=True)
     chip_ektp = models.CharField(max_length=10, blank=True, null=True)

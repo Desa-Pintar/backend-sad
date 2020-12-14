@@ -121,6 +121,7 @@ def create_or_reactivate(model, filter_param, data):
     else:
         instance = model.objects.create(**data)
     instance.save()
+    return instance
 
 
 def create_or_reactivate_user(username, password):
@@ -136,6 +137,7 @@ def create_or_reactivate_user(username, password):
         user.is_active = True
         user.set_password(password)
         user.save()
+    return user
 
 
 class CustomView(DynamicModelViewSet):
@@ -289,7 +291,9 @@ class SadPendudukViewSet(CustomView):
             format_data_penduduk(item)
             param_filter = {"nik": item["nik"]}
             try:
-                create_or_reactivate(SadPenduduk, param_filter, item)
+                penduduk = create_or_reactivate(
+                    SadPenduduk, param_filter, item
+                )
             except IntegrityError:
                 status["data_redundan"] += 1
                 continue
@@ -298,9 +302,11 @@ class SadPendudukViewSet(CustomView):
                 continue
             status["data_diinput"] += 1
 
-            create_or_reactivate_user(
+            user = create_or_reactivate_user(
                 item['nik'], item['tgl_lahir'].replace('-', '')
             )
+            penduduk.user = user
+            penduduk.save()
 
         if not status["data_diinput"]:
             status["status"] = "failed"
