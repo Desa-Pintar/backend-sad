@@ -537,3 +537,4 @@ class SuratDomisiliSerializer(CustomSerializer):
         surat.penduduk = self.context['request'].user.profile
         surat.save()
         return surat
+

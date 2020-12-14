@@ -420,6 +420,9 @@ class SigBidangViewSet(CustomView):
             item = {
                 "sig_rt": rt,
                 "nbt": item["properties"]["NBT"],
+                "pemilik": item["properties"]["pemilik"],
+                "penguasa": item["properties"]["penguasa"],
+                "geometry": item["geometry"],
             }
             SigBidang.objects.create(**item)
 
