@@ -45,6 +45,11 @@ from .models import (
     SuratKelahiran,
     SuratSkck,
     SuratDomisili,
+    JenisPindah,
+    KlasifikasiPindah,
+    AlasanPindah,
+    StatusKKTinggal,
+    StatusKKPindah,
 )
 
 
@@ -67,6 +72,41 @@ class CustomSerializer(DynamicModelSerializer):
 
     class Meta:
         model = None
+
+
+class JenisPindahSerializer(CustomSerializer):
+    class Meta:
+        model = JenisPindah
+        name = 'data'
+        exclude = []
+
+
+class AlasanPindahSerializer(CustomSerializer):
+    class Meta:
+        model = AlasanPindah
+        name = 'data'
+        exclude = []
+
+
+class KlasifikasiPindahSerializer(CustomSerializer):
+    class Meta:
+        model = KlasifikasiPindah
+        name = 'data'
+        exclude = []
+
+
+class StatusKKTinggalSerializer(CustomSerializer):
+    class Meta:
+        model = StatusKKTinggal
+        name = 'data'
+        exclude = []
+
+
+class StatusKKPindahSerializer(CustomSerializer):
+    class Meta:
+        model = StatusKKPindah
+        name = 'data'
+        exclude = []
 
 
 class PegawaiSerializer(CustomSerializer):

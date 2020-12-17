@@ -59,6 +59,11 @@ from .serializers import (
     AdminSuratSkckSerializer,
     SuratDomisiliSerializer,
     AdminSuratDomisiliSerializer,
+    JenisPindahSerializer,
+    AlasanPindahSerializer,
+    KlasifikasiPindahSerializer,
+    StatusKKTinggalSerializer,
+    StatusKKPindahSerializer,
 )
 
 from .models import (
@@ -103,6 +108,11 @@ from .models import (
     SuratKelahiran,
     SuratSkck,
     SuratDomisili,
+    JenisPindah,
+    KlasifikasiPindah,
+    AlasanPindah,
+    StatusKKTinggal,
+    StatusKKPindah,
 )
 
 
@@ -305,6 +315,12 @@ class SadPendudukViewSet(CustomView):
     serializer_class = SadPendudukSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        keluarga = self.request.query_params.get('keluarga')
+        if keluarga:
+            return SadPenduduk.objects.filter(keluarga_id=keluarga).all()
+        return SadKeluarga.objects.all()
+
     @action(detail=False, methods=["post"])
     def upload(self, request):
         status = {
@@ -388,6 +404,36 @@ class SadKematianViewSet(CustomView):
 class SadLahirmatiViewSet(CustomView):
     queryset = SadLahirmati.objects.all().order_by("id")
     serializer_class = SadLahirmatiSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class JenisPindahViewSet(CustomView):
+    queryset = JenisPindah.objects.all()
+    serializer_class = JenisPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class AlasanPindahViewSet(CustomView):
+    queryset = AlasanPindah.objects.all()
+    serializer_class = AlasanPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class KlasifikasiPindahViewSet(CustomView):
+    queryset = KlasifikasiPindah.objects.all()
+    serializer_class = KlasifikasiPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class StatusKKTinggalViewSet(CustomView):
+    queryset = StatusKKTinggal.objects.all()
+    serializer_class = StatusKKTinggalSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class StatusKKPindahViewSet(CustomView):
+    queryset = StatusKKPindah.objects.all()
+    serializer_class = StatusKKPindahSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
 
