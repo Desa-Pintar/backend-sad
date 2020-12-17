@@ -144,7 +144,7 @@ class SadDesa(CustomModel):
     email = models.CharField(max_length=100, blank=True, null=True)
     visi_misi = models.TextField(blank=True, null=True)
     sejarah = models.TextField(blank=True, null=True)
-    logo = models.TextField(blank=True, null=True)
+    logo = models.ImageField(upload_to=file_destination, blank=True, null=True)
 
     class Meta(CustomModel.Meta):
 
@@ -465,6 +465,7 @@ class SigPemilik(CustomModel):
 
         db_table = "sig_pemilik"
 
+
 class SigBidang(CustomModel):
     nbt = models.CharField(max_length=20, blank=True, null=True)
     sig_rt = models.ForeignKey(
@@ -478,8 +479,9 @@ class SigBidang(CustomModel):
     geometry = JSONField(blank=True, null=True)
 
     class Meta(CustomModel.Meta):
-        
+
         db_table = "sig_bidang"
+
 
 class SigBidang2(CustomModel):
     nbt = models.IntegerField(blank=True, null=True)

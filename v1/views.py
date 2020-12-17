@@ -1,4 +1,5 @@
 from rest_framework import permissions, status
+from django.conf import settings
 from django.db import IntegrityError
 from django.http import HttpResponse
 from dynamic_rest.viewsets import DynamicModelViewSet
@@ -33,7 +34,6 @@ from .serializers import (
     SadInventarisSerializer,
     SadSuratSerializer,
     SadDetailSuratSerializer,
-    SigPemilikSerializer,
     SigBidangSerializer,
     SigSadBidangSerializer,
     SigSadBidang2Serializer,
@@ -81,7 +81,6 @@ from .models import (
     SadInventaris,
     SadSurat,
     SadDetailSurat,
-    SigPemilik,
     SigBidang,
     SigSadBidang,
     SigSadBidang2,
@@ -169,7 +168,7 @@ class PegawaiViewSet(CustomView):
 
 
 class SadKabKotaViewSet(CustomView):
-    queryset = SadKabKota.objects.all().order_by("id")[:25]
+    queryset = SadKabKota.objects.all().order_by("id")
     serializer_class = SadKabKotaSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -181,11 +180,11 @@ class SadKabKotaViewSet(CustomView):
                 .filter(provinsi_id=provinsi)
                 .order_by('nama_kab_kota')
             )
-        return SadKabKota.objects.all()[:25]
+        return SadKabKota.objects.all()
 
 
 class SadKecamatanViewSet(CustomView):
-    queryset = SadKecamatan.objects.all().order_by("id")[:25]
+    queryset = SadKecamatan.objects.all().order_by("id")
     serializer_class = SadKecamatanSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -193,11 +192,11 @@ class SadKecamatanViewSet(CustomView):
         kabkota = self.request.query_params.get('kabkota')
         if kabkota:
             return SadKecamatan.objects.filter(kab_kota_id=kabkota).all()
-        return SadKecamatan.objects.all()[:25]
+        return SadKecamatan.objects.all()
 
 
 class SadDesaViewSet(CustomView):
-    queryset = SadDesa.objects.all().order_by("id")[:25]
+    queryset = SadDesa.objects.all().order_by("id")
     serializer_class = SadDesaSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -205,11 +204,17 @@ class SadDesaViewSet(CustomView):
         kecamatan = self.request.query_params.get('kecamatan')
         if kecamatan:
             return SadDesa.objects.filter(kecamatan_id=kecamatan).all()
-        return SadDesa.objects.all()[:25]
+        return SadDesa.objects.all()
+
+    @action(detail=False)
+    def me(self, request):
+        desa = SadDesa.objects.get(pk=settings.DESA_ID)
+        data = SadDesaSerializer(desa)
+        return Response(data.data)
 
 
 class SadDusunViewSet(CustomView):
-    queryset = SadDusun.objects.all().order_by("id")[:25]
+    queryset = SadDusun.objects.all().order_by("id")
     serializer_class = SadDusunSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -217,7 +222,7 @@ class SadDusunViewSet(CustomView):
         desa = self.request.query_params.get('desa')
         if desa:
             return SadDusun.objects.filter(desa_id=desa).all()
-        return SadDusun.objects.all()[:25]
+        return SadDusun.objects.all()
 
 
 class SadRwViewSet(CustomView):
