@@ -330,32 +330,36 @@ class JenisPindah(CustomModel):
 
 
 class AlasanPindah(CustomModel):
-    nama = models.CharField(max_length=64)
-    label = models.CharField(max_length=128)
+    id = models.IntegerField(primary_key=True, default=1)
+    nama = models.CharField(max_length=64, default='label')
+    label = models.CharField(max_length=128, default='nama')
 
     class Meta(CustomModel.Meta):
         db_table = 'alasan_pindah'
 
 
 class KlasifikasiPindah(CustomModel):
-    nama = models.CharField(max_length=64)
-    label = models.CharField(max_length=128)
+    id = models.IntegerField(primary_key=True, default=1)
+    nama = models.CharField(max_length=64, default='label')
+    label = models.CharField(max_length=128, default='nama')
 
     class Meta(CustomModel.Meta):
         db_table = 'klasifikasi_pindah'
 
 
 class StatusKKTinggal(CustomModel):
-    nama = models.CharField(max_length=64)
-    label = models.CharField(max_length=128)
+    id = models.IntegerField(primary_key=True, default=1)
+    nama = models.CharField(max_length=64, default='label')
+    label = models.CharField(max_length=128, default='nama')
 
     class Meta(CustomModel.Meta):
         db_table = 'status_kk_tinggal'
 
 
 class StatusKKPindah(CustomModel):
-    nama = models.CharField(max_length=64)
-    label = models.CharField(max_length=128)
+    id = models.IntegerField(primary_key=True, default=1)
+    nama = models.CharField(max_length=64, default='label')
+    label = models.CharField(max_length=128, default='nama')
 
     class Meta(CustomModel.Meta):
         db_table = 'status_kk_pindah'
