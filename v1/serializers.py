@@ -259,19 +259,40 @@ class SadLahirmatiSerializer(CustomSerializer):
 
 class SadPindahKeluarSerializer(CustomSerializer):
     pemohon = DynamicRelationField(SadPendudukSerializer)
-    anggota = serializers.ListField(
+    anggota_pindah = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True
+    )
+    anggota_tinggal = serializers.ListField(
         child=serializers.IntegerField(), write_only=True
     )
 
     def create(self, validated_data):
-        anggota_id_s = validated_data.pop('anggota')
+        anggota_pindah_s = validated_data.pop('anggota_pindah')
+        anggota_tinggal_s = validated_data.pop('anggota_tinggal')
+
         sad_pindah = SadPindahKeluar.objects.create(**validated_data)
-        for aid in anggota_id_s:
-            penduduk = SadPenduduk.objects.filter(id=aid).first()
-            if penduduk:
-                penduduk.deleted_at = timezone.now()
-                penduduk.deleted_by = self.context['request'].user
-                penduduk.save()
+
+        if validated_data.get('status_kk_pindah'):
+            if validated_data['status_kk_pindah'].nama == 'kk_baru':
+                for item in anggota_pindah_s:
+                    penduduk = SadPenduduk.objects.filter(id=item).first()
+                    if penduduk:
+                        penduduk.deleted_at = timezone.now()
+                        penduduk.deleted_by = self.context['request'].user
+                        penduduk.save()
+        if validated_data.get('status_kk_tinggal'):
+            if validated_data['status_kk_tinggal'].nama == 'kk_baru':
+                for item in anggota_tinggal_s:
+                    penduduk = SadPenduduk.objects.filter(id=item).first()
+                    if penduduk:
+                        penduduk.deleted_at = timezone.now()
+                        penduduk.deleted_by = self.context['request'].user
+                        penduduk.save()
+        keluarga = validated_data.get('keluarga')
+        if not keluarga.anggota.count():
+            keluarga.deleted_at = timezone.now()
+            keluarga.deleted_by = self.context['request'].user
+            keluarga.save()
         sad_pindah.save()
         return sad_pindah
 
