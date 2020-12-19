@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.contrib.auth.models import User, Group
+from rest_framework.response import Response
 from dynamic_rest.serializers import DynamicModelSerializer
 from dynamic_rest.fields import DynamicRelationField
 from rest_framework import serializers
@@ -305,12 +307,42 @@ class SadPindahKeluarSerializer(CustomSerializer):
 
 
 class MiniUserSerializer(DynamicModelSerializer):
-    nik = serializers.CharField(required=True)
-    nama = serializers.CharField(required=True)
-    tgl_lahir = serializers.DateField(required=True)
-    status = serializers.ChoiceField(
-        status_keluarga, write_only=True, required=True
-    )
+    nik = serializers.CharField()
+    nama = serializers.CharField()
+    tgl_lahir = serializers.DateField()
+    status = serializers.ChoiceField(status_keluarga)
+
+
+def create_or_reactivate(model, filter_param, data):
+    instance = model.all_objects.filter(**filter_param).dead().first()
+
+    if instance:
+        instance.deleted_by = None
+        instance.deleted_at = None
+        instance.save()
+
+        model.objects.filter(pk=instance.pk).update(**data)
+        instance.refresh_from_db()
+    else:
+        instance = model.objects.create(**data)
+    instance.save()
+    return instance
+
+
+def create_or_reactivate_user(username, password):
+    user = User.objects.filter(username=username).first()
+    group = Group.objects.get(name="penduduk")
+
+    if not user:
+        user = User.objects.create(username=username)
+        user.set_password(password)
+        user.groups.add(group)
+        user.save()
+    elif not user.is_active:
+        user.is_active = True
+        user.set_password(password)
+        user.save()
+    return user
 
 
 class SadPindahMasukSerializer(CustomSerializer):
@@ -319,10 +351,35 @@ class SadPindahMasukSerializer(CustomSerializer):
         child=MiniUserSerializer(), write_only=True
     )
 
+    def create(self, validated_data):
+        anggota = validated_data.pop("anggota")
+
+        sad_masuk = SadPindahMasuk.objects.create(**validated_data)
+
+        keluarga_data = validated_data.copy()
+        keluarga_data["status_kk"] = keluarga_data.pop(
+            "status_kk_pindah"
+        ).label
+        keluarga_data.pop("nik_datang")
+        keluarga_data.pop("tanggal_kedatangan")
+        keluarga_filter = {"no_kk": keluarga_data["no_kk"]}
+        try:
+            keluarga = create_or_reactivate(
+                SadKeluarga, keluarga_filter, keluarga_data
+            )
+        except Exception:
+            return Response({"msg": "Gagal menyimpan data keluarga"}, 400)
+        keluarga.save()
+
+        for item in anggota:
+            penduduk = None
+
+        sad_masuk.save()
+
     class Meta:
         model = SadPindahMasuk
         name = "data"
-        exclude = util_columns
+        exclude = util_columns + ["nik_datang"]
 
 
 class SadSarprasSerializer(CustomSerializer):

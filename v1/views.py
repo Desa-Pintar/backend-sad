@@ -143,6 +143,7 @@ def create_or_reactivate(model, filter_param, data):
         model.objects.filter(pk=instance.pk).update(**data)
         instance.refresh_from_db()
     else:
+        print(data)
         instance = model.objects.create(**data)
     instance.save()
     return instance
@@ -372,6 +373,7 @@ class SadPendudukViewSet(CustomView):
 
             format_data_penduduk(item)
             param_filter = {"nik": item["nik"]}
+            penduduk = create_or_reactivate(SadPenduduk, param_filter, item)
             try:
                 penduduk = create_or_reactivate(
                     SadPenduduk, param_filter, item
@@ -380,7 +382,8 @@ class SadPendudukViewSet(CustomView):
             except IntegrityError:
                 status["data_redundan"] += 1
                 continue
-            except Exception:
+            except Exception as e:
+                print(str(e))
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
