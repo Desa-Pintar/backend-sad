@@ -270,7 +270,7 @@ class SadPindahKeluarSerializer(CustomSerializer):
     def create(self, validated_data):
         nik_pindah = validated_data.pop("anggota_pindah")
 
-        validated_data["nik_pindah"] = ",".join(nik_pindah)
+        validated_data["nik_pindah"] = ",".join(str(i) for i in nik_pindah)
         sad_pindah = SadPindahKeluar.objects.create(**validated_data)
 
         keluarga_id = validated_data.get("nomor_kk")
