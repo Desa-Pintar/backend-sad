@@ -12,6 +12,7 @@ from django.contrib.auth.models import User, Group
 import pandas
 import json
 from io import BytesIO
+import numpy as np
 
 from users.permissions import IsAdminUserOrReadOnly
 from .utils import render_mail
@@ -124,7 +125,12 @@ from .models import (
 
 
 def format_data_penduduk(data):
-    cols = ["tgl_lahir", "tgl_exp_paspor", "tgl_kawin", "tgl_cerai"]
+    cols = [
+        "tgl_lahir",
+        "tgl_exp_paspor",
+        "tgl_kawin",
+        "tgl_cerai",
+    ]
     for col in cols:
         if type(data[col]) == pandas.Timestamp:
             data[col] = str(data[col]).split(" ")[0]
@@ -133,6 +139,7 @@ def format_data_penduduk(data):
 
 
 def create_or_reactivate(model, filter_param, data):
+    print(data)
     instance = model.all_objects.filter(**filter_param).dead().first()
 
     if instance:
@@ -362,6 +369,7 @@ class SadPendudukViewSet(CustomView):
         if data[["nik", "keluarga", "nama"]].isna().values.any():
             message = "Silahkan lengkapi data nik, keluarga dan nama"
             return Response({"message": message}, status=400)
+        data = data.replace({np.nan: None})
 
         for item in data.to_dict("record"):
             item["keluarga"] = SadKeluarga.objects.filter(
@@ -538,9 +546,9 @@ class SigBidangViewSet(CustomView):
         user = request.user
         payload = {"id": user.id, "username": user.username}
 
-        if hasattr(user.profile, "pemilik"):
+        if hasattr(user.profile, 'pemilik'):
             pemilik = {
-                "pemilik_warga": user.profile.pemilik.pemilik_warga,
+                'pemilik_warga': user.profile.pemilik.pemilik_warga,
             }
             payload["pemilik"] = pemilik
         return Response(payload)
@@ -762,6 +770,16 @@ class KategoriArtikelViewSet(DynamicModelViewSet):
 class ArtikelViewSet(DynamicModelViewSet):
     queryset = Artikel.objects.all().order_by("id")
     serializer_class = ArtikelSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class SliderViewSet(DynamicModelViewSet):
+    queryset = Slider.objects.all().order_by("id")
+    serializer_class = SliderSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class SliderViewSet(DynamicModelViewSet):
+    queryset = Slider.objects.all().order_by("id")
+    serializer_class = SliderSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
