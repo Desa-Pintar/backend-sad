@@ -465,13 +465,19 @@ class SadPindahKeluar(CustomModel):
 
 class SadPindahMasuk(CustomModel):
     no_kk = models.CharField(max_length=18, blank=True, null=True)
-    status_no_kk_pindah = models.CharField(
-        max_length=20, blank=True, null=True
+    status_kk_pindah = models.ForeignKey(
+        StatusKKPindah, models.DO_NOTHING, blank=True, null=True
     )
     tanggal_kedatangan = models.DateField(blank=True, null=True)
     alamat = models.CharField(max_length=100, blank=True, null=True)
-    rt_id = models.IntegerField(blank=True, null=True)
-    yang_datang = models.TextField(blank=True, null=True)
+    rt_id = models.ForeignKey(SadRt, models.DO_NOTHING, blank=True, null=True)
+    nik_datang = models.CharField(max_length=128, blank=True, null=True)
+
+    def anggota_masuk(self):
+        nik_s = list(self.nik_datang.split(","))
+        if nik_s:
+            return SadPenduduk.all_objects.filter(pk__in=nik_s)
+        return []
 
     class Meta(CustomModel.Meta):
 

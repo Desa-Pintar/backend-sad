@@ -63,6 +63,18 @@ util_columns = [
     "deleted_at",
 ]
 
+status_keluarga = [
+    "Kepala Keluarga",
+    "Suami",
+    "Istri",
+    "Anak",
+    "Menantu",
+    "Cucu",
+    "Orang Tua",
+    "Famili Lain",
+    "Lainnya",
+]
+
 
 class CustomSerializer(DynamicModelSerializer):
     extra_kwargs = {"created_by": {"write_only": True}}
@@ -135,25 +147,21 @@ class SadProvinsiSerializer(CustomSerializer):
 
 
 class SadKabKotaSerializer(CustomSerializer):
-    provinsi_id = serializers.IntegerField(
-        source="provinsi.id", read_only=True
-    )
+    provinsi = DynamicRelationField(SadProvinsiSerializer)
 
     class Meta:
         model = SadKabKota
         name = "data"
-        exclude = ["provinsi"]
+        exclude = util_columns
 
 
 class SadKecamatanSerializer(CustomSerializer):
-    kab_kota_id = serializers.IntegerField(
-        source="kab_kota.id", read_only=True
-    )
+    kab_kota = DynamicRelationField(SadKabKotaSerializer)
 
     class Meta:
         model = SadKecamatan
         name = "data"
-        exclude = ["kab_kota"]
+        exclude = util_columns
 
 
 class SadDesaSerializer(CustomSerializer):
@@ -179,18 +187,14 @@ class BatasDesaSerializer(CustomSerializer):
 
 
 class SadDusunSerializer(CustomSerializer):
-    desa_id = serializers.IntegerField(source="desa.id", read_only=True)
-
     class Meta:
         model = SadDusun
         name = "data"
-        exclude = ["desa"]
+        exclude = []
 
 
 class SadRwSerializer(CustomSerializer):
-    dusun = DynamicRelationField(
-        "SadDusunSerializer", deferred=False, embed=True
-    )
+    dusun = DynamicRelationField("SadDusunSerializer", deferred=False)
 
     class Meta:
         model = SadRw
@@ -199,7 +203,7 @@ class SadRwSerializer(CustomSerializer):
 
 
 class SadRtSerializer(CustomSerializer):
-    rw = DynamicRelationField("SadRwSerializer", deferred=False, embed=True)
+    rw = DynamicRelationField("SadRwSerializer", deferred=False)
 
     class Meta:
         model = SadRt
@@ -258,6 +262,7 @@ class SadLahirmatiSerializer(CustomSerializer):
 
 
 class SadPindahKeluarSerializer(CustomSerializer):
+    kelurahan_tujuan = DynamicRelationField(SadDesaSerializer)
     anggota_pindah = serializers.ListField(
         child=serializers.IntegerField(), write_only=True
     )
@@ -299,11 +304,25 @@ class SadPindahKeluarSerializer(CustomSerializer):
         exclude = util_columns + ["nik_pindah"]
 
 
+class MiniUserSerializer(DynamicModelSerializer):
+    nik = serializers.CharField(required=True)
+    nama = serializers.CharField(required=True)
+    tgl_lahir = serializers.DateField(required=True)
+    status = serializers.ChoiceField(
+        status_keluarga, write_only=True, required=True
+    )
+
+
 class SadPindahMasukSerializer(CustomSerializer):
+    rt_id = DynamicRelationField(SadRtSerializer)
+    anggota = serializers.ListField(
+        child=MiniUserSerializer(), write_only=True
+    )
+
     class Meta:
         model = SadPindahMasuk
         name = "data"
-        fields = ["id", "no_kk", "nik_kepala_keluarga"]
+        exclude = util_columns
 
 
 class SadSarprasSerializer(CustomSerializer):

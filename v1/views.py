@@ -253,11 +253,23 @@ class SadRwViewSet(CustomView):
     serializer_class = SadRwSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
+    def get_queryset(self):
+        dusun = self.request.query_params.get("dusun")
+        if dusun:
+            return SadRw.objects.filter(dusun=dusun).all()
+        return SadRw.objects.all()
+
 
 class SadRtViewSet(CustomView):
     queryset = SadRt.objects.all().order_by("id")
     serializer_class = SadRtSerializer
     permission_classes = [IsAdminUserOrReadOnly]
+
+    def get_queryset(self):
+        rw = self.request.query_params.get("rw")
+        if rw:
+            return SadRt.objects.filter(rw_id=rw).all()
+        return SadRt.objects.all()
 
 
 class SadKeluargaViewSet(DynamicModelViewSet):
