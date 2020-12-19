@@ -1,6 +1,7 @@
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
 from dynamic_rest.serializers import DynamicModelSerializer
 from dynamic_rest.fields import DynamicRelationField
 from rest_framework import serializers
@@ -307,10 +308,11 @@ class SadPindahKeluarSerializer(CustomSerializer):
 
 
 class MiniUserSerializer(DynamicModelSerializer):
-    nik = serializers.CharField()
-    nama = serializers.CharField()
-    tgl_lahir = serializers.DateField()
-    status = serializers.ChoiceField(status_keluarga)
+    status_dalam_keluarga = serializers.ChoiceField(status_keluarga)
+
+    class Meta:
+        model = SadPenduduk
+        fields = ["nik", "nama", "tgl_lahir", "status_dalam_keluarga"]
 
 
 def create_or_reactivate(model, filter_param, data):
@@ -354,13 +356,20 @@ class SadPindahMasukSerializer(CustomSerializer):
     def create(self, validated_data):
         anggota = validated_data.pop("anggota")
 
+        print("This 0")
+        if SadKeluarga.objects.filter(no_kk=validated_data["no_kk"]).exists():
+            print("This x")
+            raise APIException("Nomor KK Sudah terdaftar", 400)
+
         sad_masuk = SadPindahMasuk.objects.create(**validated_data)
 
         keluarga_data = validated_data.copy()
+        print("This 1")
+        print(keluarga_data)
         keluarga_data["status_kk"] = keluarga_data.pop(
             "status_kk_pindah"
         ).label
-        keluarga_data.pop("nik_datang")
+        keluarga_data["rt"] = keluarga_data.pop("rt_id")
         keluarga_data.pop("tanggal_kedatangan")
         keluarga_filter = {"no_kk": keluarga_data["no_kk"]}
         try:
@@ -372,9 +381,24 @@ class SadPindahMasukSerializer(CustomSerializer):
         keluarga.save()
 
         for item in anggota:
-            penduduk = None
+            penduduk_filter = {"nik": item["nik"]}
+            try:
+                penduduk = create_or_reactivate(
+                    SadPenduduk, penduduk_filter, item
+                )
+            except Exception:
+                keluarga.delete()
+                return Response({"msg": "Data Penduduk Gagal"})
+            print(str(item["tgl_lahir"]))
+            user = create_or_reactivate_user(
+                item["nik"], str(item["tgl_lahir"]).replace("-", "")
+            )
+            penduduk.user = user
+            penduduk.save()
+        print("This 2")
 
         sad_masuk.save()
+        return sad_masuk
 
     class Meta:
         model = SadPindahMasuk
