@@ -46,7 +46,7 @@ LOGGING = {
 
 # This Desa
 # DESA_ID = 7505020008
-DESA_ID = 3403100013
+DESA_ID = 3515140008
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
