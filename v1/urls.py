@@ -41,9 +41,6 @@ from .views import (
     LaporViewSet,
     InformasiViewSet,
     PotensiViewSet,
-    SuratKelahiranViewSet,
-    SuratSkckViewSet,
-    SuratDomisiliViewSet,
     JenisPindahViewSet,
     AlasanPindahViewSet,
     KlasifikasiPindahViewSet,
@@ -118,9 +115,6 @@ router.register(r"berita", ArtikelViewSet)
 router.register(r"informasi", InformasiViewSet)
 router.register(r"potensi", PotensiViewSet)
 router.register(r"lapor", LaporViewSet)
-router.register(r"suratkelahiran", SuratKelahiranViewSet)
-router.register(r"suratskck", SuratSkckViewSet)
-router.register(r"domisili", SuratDomisiliViewSet)
 router.register(r"jenispindah", JenisPindahViewSet)
 router.register(r"klasifikasipindah", KlasifikasiPindahViewSet)
 router.register(r"alasanpindah", AlasanPindahViewSet)
