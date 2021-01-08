@@ -1,9 +1,12 @@
 import os
 
+from rest_framework import status
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
+from rest_framework.response import Response
 from dynamic_rest.serializers import DynamicModelSerializer
+from dynamic_rest.viewsets import DynamicModelViewSet
 
 # Excluded column in serializer
 util_columns = [
@@ -21,6 +24,14 @@ def file_destination(instance, filename):
     new_filename = timezone.now().strftime("%Y%m%d%H%M%S")
     folder_name = instance.__class__.__name__.lower()
     return f"{folder_name}/{new_filename}{extension}"
+
+
+class CustomView(DynamicModelViewSet):
+    def destroy(self, request, pk, format=None):
+        data = self.get_object()
+        data.deleted_by = request.user
+        data.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CustomModelQuerySet(models.QuerySet):

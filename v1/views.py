@@ -1,8 +1,7 @@
-from rest_framework import permissions, status
+from rest_framework import permissions
 from django.conf import settings
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 from dynamic_rest.viewsets import DynamicModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -12,11 +11,12 @@ import json
 from io import BytesIO
 import numpy as np
 
-from users.permissions import IsAdminUserOrReadOnly
 from api_sad_sig.util import (
+    CustomView,
     create_or_reactivate,
     create_or_reactivate_user,
 )
+from users.permissions import IsAdminUserOrReadOnly
 from .serializers import (
     PegawaiSerializer,
     SadProvinsiSerializer,
@@ -29,11 +29,6 @@ from .serializers import (
     SadRtSerializer,
     SadKeluargaSerializer,
     SadPendudukSerializer,
-    SadKelahiranSerializer,
-    SadKematianSerializer,
-    SadLahirmatiSerializer,
-    SadPindahMasukSerializer,
-    SadPindahKeluarSerializer,
     SadSarprasSerializer,
     SadInventarisSerializer,
     SadSuratSerializer,
@@ -60,11 +55,6 @@ from .serializers import (
     PotensiSerializer,
     KategoriInformasiSerializer,
     InformasiSerializer,
-    JenisPindahSerializer,
-    AlasanPindahSerializer,
-    KlasifikasiPindahSerializer,
-    StatusKKTinggalSerializer,
-    StatusKKPindahSerializer,
     KategoriBelanjaSerializer,
     KategoriPendapatanSerializer,
     KategoriTahunSerializer,
@@ -104,11 +94,6 @@ from .models import (
     SadRt,
     SadKeluarga,
     SadPenduduk,
-    SadKelahiran,
-    SadKematian,
-    SadLahirmati,
-    SadPindahKeluar,
-    SadPindahMasuk,
     SadSarpras,
     SadInventaris,
     SadSurat,
@@ -133,11 +118,6 @@ from .models import (
     KategoriInformasi,
     Potensi,
     KategoriPotensi,
-    JenisPindah,
-    KlasifikasiPindah,
-    AlasanPindah,
-    StatusKKTinggal,
-    StatusKKPindah,
     Slider,
     KategoriBelanja,
     KategoriTahun,
@@ -179,14 +159,6 @@ def format_data_penduduk(data):
             data[col] = str(data[col]).split(" ")[0]
         else:
             data.pop(col)
-
-
-class CustomView(DynamicModelViewSet):
-    def destroy(self, request, pk, format=None):
-        data = self.get_object()
-        data.deleted_by = request.user
-        data.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SadProvinsiViewSet(CustomView):
@@ -444,81 +416,6 @@ class SadPendudukViewSet(CustomView):
                     "officedocument.spreadsheetml.sheet"
                 ),
             )
-
-
-class SadKelahiranViewSet(CustomView):
-    queryset = SadKelahiran.objects.all().order_by("id")
-    serializer_class = SadKelahiranSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class SadKematianViewSet(CustomView):
-    queryset = SadKematian.objects.all().order_by("id")
-    serializer_class = SadKematianSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class SadLahirmatiViewSet(CustomView):
-    queryset = SadLahirmati.objects.all().order_by("id")
-    serializer_class = SadLahirmatiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class JenisPindahViewSet(CustomView):
-    queryset = JenisPindah.objects.all()
-    serializer_class = JenisPindahSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class AlasanPindahViewSet(CustomView):
-    queryset = AlasanPindah.objects.all()
-    serializer_class = AlasanPindahSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class KlasifikasiPindahViewSet(CustomView):
-    queryset = KlasifikasiPindah.objects.all()
-    serializer_class = KlasifikasiPindahSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class StatusKKTinggalViewSet(CustomView):
-    queryset = StatusKKTinggal.objects.all()
-    serializer_class = StatusKKTinggalSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class StatusKKPindahViewSet(CustomView):
-    queryset = StatusKKPindah.objects.all()
-    serializer_class = StatusKKPindahSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-
-class SadPindahKeluarViewSet(CustomView):
-    queryset = SadPindahKeluar.objects.all().order_by("id")
-    serializer_class = SadPindahKeluarSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
-
-    def retrieve(self, request, pk=None):
-        queryset = SadPindahKeluar.objects.all()
-        sad_pindah = get_object_or_404(queryset, pk=pk)
-        serializer = SadPindahKeluarSerializer(sad_pindah)
-        data = serializer.data
-
-        penduduk_s = sad_pindah.anggota_keluar()
-        penduduk_data = []
-        for item in penduduk_s:
-            temp_data = {"nik": item.nik, "nama": item.nama}
-            penduduk_data.append(temp_data)
-
-        data["anggota_keluar"] = penduduk_data
-        return Response(data)
-
-
-class SadPindahMasukViewSet(CustomView):
-    queryset = SadPindahMasuk.objects.all().order_by("id")
-    serializer_class = SadPindahMasukSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
 
 
 class SadSarprasViewSet(CustomView):

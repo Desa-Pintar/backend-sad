@@ -1,6 +1,3 @@
-from django.utils import timezone
-from rest_framework.response import Response
-from rest_framework.exceptions import APIException
 from dynamic_rest.serializers import DynamicModelSerializer
 from dynamic_rest.fields import DynamicRelationField
 from rest_framework import serializers
@@ -23,11 +20,6 @@ from .models import (
     SadRt,
     SadKeluarga,
     SadPenduduk,
-    SadKelahiran,
-    SadKematian,
-    SadLahirmati,
-    SadPindahKeluar,
-    SadPindahMasuk,
     SadSarpras,
     SadInventaris,
     SadSurat,
@@ -54,11 +46,6 @@ from .models import (
     KategoriLapor,
     StatusLapor,
     Lapor,
-    JenisPindah,
-    KlasifikasiPindah,
-    AlasanPindah,
-    StatusKKTinggal,
-    StatusKKPindah,
     KategoriPendapatan,
     KategoriTahun,
     KategoriBelanja,
@@ -84,54 +71,6 @@ from .models import (
     StatusPns,
     Golongan,
 )
-
-
-status_keluarga = [
-    "Kepala Keluarga",
-    "Suami",
-    "Istri",
-    "Anak",
-    "Menantu",
-    "Cucu",
-    "Orang Tua",
-    "Famili Lain",
-    "Lainnya",
-]
-
-
-class JenisPindahSerializer(CustomSerializer):
-    class Meta:
-        model = JenisPindah
-        name = "data"
-        exclude = []
-
-
-class AlasanPindahSerializer(CustomSerializer):
-    class Meta:
-        model = AlasanPindah
-        name = "data"
-        exclude = []
-
-
-class KlasifikasiPindahSerializer(CustomSerializer):
-    class Meta:
-        model = KlasifikasiPindah
-        name = "data"
-        exclude = []
-
-
-class StatusKKTinggalSerializer(CustomSerializer):
-    class Meta:
-        model = StatusKKTinggal
-        name = "data"
-        exclude = []
-
-
-class StatusKKPindahSerializer(CustomSerializer):
-    class Meta:
-        model = StatusKKPindah
-        name = "data"
-        exclude = []
 
 
 class PegawaiSerializer(CustomSerializer):
@@ -260,144 +199,6 @@ class SadPendudukSerializer(CustomSerializer):
         penduduk.save()
         penduduk.user.save()
         return penduduk
-
-
-class SadKelahiranSerializer(CustomSerializer):
-    class Meta:
-        model = SadKelahiran
-        name = "data"
-        exclude = []
-
-
-class SadKematianSerializer(CustomSerializer):
-    penduduk = DynamicRelationField(
-        "SadPendudukSerializer", deferred=True, embed=True
-    )
-
-    class Meta:
-        model = SadKematian
-        name = "data"
-        exclude = []
-
-
-class SadLahirmatiSerializer(CustomSerializer):
-    class Meta:
-        model = SadLahirmati
-        name = "data"
-        exclude = []
-
-
-class SadPindahKeluarSerializer(CustomSerializer):
-    kelurahan_tujuan = DynamicRelationField(
-        SadDesaSerializer, deferred=False, embed=True
-    )
-    anggota_pindah = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True
-    )
-
-    def create(self, validated_data):
-        nik_pindah = validated_data.pop("anggota_pindah")
-
-        validated_data["nik_pindah"] = ",".join(str(i) for i in nik_pindah)
-        sad_pindah = SadPindahKeluar.objects.create(**validated_data)
-
-        keluarga_id = validated_data.get("nomor_kk")
-        keluarga = SadKeluarga.objects.get(no_kk=keluarga_id)
-
-        if validated_data.get("status_kk_pindah"):
-            if validated_data["status_kk_pindah"].nama == "kk_baru":
-                penduduk_pindah = keluarga.anggota.filter(pk__in=nik_pindah)
-                for penduduk in penduduk_pindah:
-                    penduduk.deleted_at = timezone.now()
-                    penduduk.deleted_by = self.context["request"].user
-                    penduduk.save()
-        if validated_data.get("status_kk_tinggal"):
-            if validated_data["status_kk_tinggal"].nama == "kk_baru":
-                penduduk_tinggal = keluarga.anggota.exclude(pk__in=nik_pindah)
-                for penduduk in penduduk_tinggal:
-                    penduduk.deleted_at = timezone.now()
-                    penduduk.deleted_by = self.context["request"].user
-                    penduduk.save()
-        keluarga.refresh_from_db()
-        if not keluarga.anggota.count():
-            keluarga.deleted_at = timezone.now()
-            keluarga.deleted_by = self.context["request"].user
-            keluarga.save()
-        sad_pindah.save()
-        return sad_pindah
-
-    class Meta:
-        model = SadPindahKeluar
-        name = "data"
-        exclude = util_columns + ["nik_pindah"]
-
-
-class MiniUserSerializer(DynamicModelSerializer):
-    status_dalam_keluarga = serializers.ChoiceField(status_keluarga)
-
-    class Meta:
-        model = SadPenduduk
-        fields = ["nik", "nama", "tgl_lahir", "status_dalam_keluarga"]
-
-
-class SadPindahMasukSerializer(CustomSerializer):
-    rt_id = DynamicRelationField(SadRtSerializer)
-    anggota = serializers.ListField(
-        child=MiniUserSerializer(), write_only=True
-    )
-
-    def create(self, validated_data):
-        anggota = validated_data.pop("anggota")
-
-        print("This 0")
-        if SadKeluarga.objects.filter(no_kk=validated_data["no_kk"]).exists():
-            print("This x")
-            raise APIException("Nomor KK Sudah terdaftar", 400)
-
-        sad_masuk = SadPindahMasuk.objects.create(**validated_data)
-
-        keluarga_data = validated_data.copy()
-        print("This 1")
-        print(keluarga_data)
-        keluarga_data["status_kk"] = keluarga_data.pop(
-            "status_kk_pindah"
-        ).label
-        keluarga_data["rt"] = keluarga_data.pop("rt_id")
-        keluarga_data.pop("tanggal_kedatangan")
-        keluarga_filter = {"no_kk": keluarga_data["no_kk"]}
-        try:
-            keluarga = create_or_reactivate(
-                SadKeluarga, keluarga_filter, keluarga_data
-            )
-        except Exception:
-            return Response({"msg": "Gagal menyimpan data keluarga"}, 400)
-        keluarga.save()
-
-        for item in anggota:
-            penduduk_filter = {"nik": item["nik"]}
-            try:
-                penduduk = create_or_reactivate(
-                    SadPenduduk, penduduk_filter, item
-                )
-            except Exception:
-                keluarga.delete()
-                return Response({"msg": "Data Penduduk Gagal"})
-            print(str(item["tgl_lahir"]))
-            user = create_or_reactivate_user(
-                item["nik"], str(item["tgl_lahir"]).replace("-", "")
-            )
-            penduduk.user = user
-            penduduk.keluarga = keluarga
-            penduduk.save()
-        print("This 2")
-
-        sad_masuk.save()
-        return sad_masuk
-
-    class Meta:
-        model = SadPindahMasuk
-        name = "data"
-        exclude = util_columns + ["nik_datang"]
 
 
 class SadSarprasSerializer(CustomSerializer):

@@ -1,10 +1,30 @@
 from rest_framework import permissions
+
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
+from rest_framework.response import Response
 from dynamic_rest.viewsets import DynamicModelViewSet
 
+from api_sad_sig.util import CustomView
+from users.permissions import IsAdminUserOrReadOnly
+
 from .utils import render_mail
-from .models import SuratDomisili, SuratKelahiran, SuratSkck
+from .models import (
+    SuratDomisili,
+    SuratKelahiran,
+    SuratSkck,
+    SadKelahiran,
+    SadKematian,
+    SadLahirmati,
+    JenisPindah,
+    AlasanPindah,
+    KlasifikasiPindah,
+    StatusKKPindah,
+    StatusKKTinggal,
+    SadPindahKeluar,
+    SadPindahMasuk,
+)
 from .serializers import (
     AdminSuratDomisiliSerializer,
     AdminSuratKelahiranSerializer,
@@ -12,6 +32,16 @@ from .serializers import (
     SuratDomisiliSerializer,
     SuratKelahiranSerializer,
     SuratSkckSerializer,
+    SadKelahiranSerializer,
+    SadKematianSerializer,
+    SadLahirmatiSerializer,
+    AlasanPindahSerializer,
+    KlasifikasiPindahSerializer,
+    JenisPindahSerializer,
+    StatusKKPindahSerializer,
+    StatusKKTinggalSerializer,
+    SadPindahKeluarSerializer,
+    SadPindahMasukSerializer,
 )
 
 
@@ -61,3 +91,78 @@ class SuratDomisiliViewSet(DynamicModelViewSet):
         data = self.get_object()
         pdf = render_mail("skd", data)
         return HttpResponse(pdf, content_type="application/pdf")
+
+
+class SadKelahiranViewSet(CustomView):
+    queryset = SadKelahiran.objects.all().order_by("id")
+    serializer_class = SadKelahiranSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class SadKematianViewSet(CustomView):
+    queryset = SadKematian.objects.all().order_by("id")
+    serializer_class = SadKematianSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class SadLahirmatiViewSet(CustomView):
+    queryset = SadLahirmati.objects.all().order_by("id")
+    serializer_class = SadLahirmatiSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class JenisPindahViewSet(CustomView):
+    queryset = JenisPindah.objects.all()
+    serializer_class = JenisPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class AlasanPindahViewSet(CustomView):
+    queryset = AlasanPindah.objects.all()
+    serializer_class = AlasanPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class KlasifikasiPindahViewSet(CustomView):
+    queryset = KlasifikasiPindah.objects.all()
+    serializer_class = KlasifikasiPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class StatusKKTinggalViewSet(CustomView):
+    queryset = StatusKKTinggal.objects.all()
+    serializer_class = StatusKKTinggalSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class StatusKKPindahViewSet(CustomView):
+    queryset = StatusKKPindah.objects.all()
+    serializer_class = StatusKKPindahSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+
+class SadPindahKeluarViewSet(CustomView):
+    queryset = SadPindahKeluar.objects.all().order_by("id")
+    serializer_class = SadPindahKeluarSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+    def retrieve(self, request, pk=None):
+        queryset = SadPindahKeluar.objects.all()
+        sad_pindah = get_object_or_404(queryset, pk=pk)
+        serializer = SadPindahKeluarSerializer(sad_pindah)
+        data = serializer.data
+
+        penduduk_s = sad_pindah.anggota_keluar()
+        penduduk_data = []
+        for item in penduduk_s:
+            temp_data = {"nik": item.nik, "nama": item.nama}
+            penduduk_data.append(temp_data)
+
+        data["anggota_keluar"] = penduduk_data
+        return Response(data)
+
+
+class SadPindahMasukViewSet(CustomView):
+    queryset = SadPindahMasuk.objects.all().order_by("id")
+    serializer_class = SadPindahMasukSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
