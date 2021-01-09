@@ -14,6 +14,7 @@ from .views import (
     SadLahirmatiViewSet,
     SadPindahKeluarViewSet,
     SadPindahMasukViewSet,
+    SadPecahKKViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -31,3 +32,4 @@ router.register(r"kematian", SadKematianViewSet)
 router.register(r"lahirmati", SadLahirmatiViewSet)
 router.register(r"pindahkeluar", SadPindahKeluarViewSet)
 router.register(r"pindahmasuk", SadPindahMasukViewSet)
+router.register(r"pecahkk", SadPecahKKViewSet)

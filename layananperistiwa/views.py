@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from dynamic_rest.viewsets import DynamicModelViewSet
 
 from api_sad_sig.util import CustomView
@@ -24,6 +25,7 @@ from .models import (
     StatusKKTinggal,
     SadPindahKeluar,
     SadPindahMasuk,
+    SadPecahKK,
 )
 from .serializers import (
     AdminSuratDomisiliSerializer,
@@ -42,6 +44,7 @@ from .serializers import (
     StatusKKTinggalSerializer,
     SadPindahKeluarSerializer,
     SadPindahMasukSerializer,
+    SadPecahKKSerializer,
 )
 
 
@@ -166,3 +169,14 @@ class SadPindahMasukViewSet(CustomView):
     queryset = SadPindahMasuk.objects.all().order_by("id")
     serializer_class = SadPindahMasukSerializer
     permission_classes = [IsAdminUserOrReadOnly]
+
+
+class SadPecahKKViewSet(CustomView):
+    queryset = SadPecahKK.objects.order_by("id").all()
+    serializer_class = SadPecahKKSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action in ["update", "retrieve", "delete"]:
+            raise NotFound("Operasi ini tidak tersedia")
+        return SadPecahKKSerializer

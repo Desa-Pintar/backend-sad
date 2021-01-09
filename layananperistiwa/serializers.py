@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from dynamic_rest.serializers import DynamicModelSerializer
@@ -12,7 +13,7 @@ from api_sad_sig.util import (
     create_or_reactivate,
     create_or_reactivate_user,
 )
-from v1.models import SadKeluarga, SadPenduduk
+from v1.models import SadKeluarga, SadPenduduk, SadRt
 from v1.serializers import (
     PegawaiSerializer,
     SadDesaSerializer,
@@ -33,6 +34,7 @@ from .models import (
     KlasifikasiPindah,
     StatusKKPindah,
     StatusKKTinggal,
+    SadPecahKK,
 )
 
 status_keluarga = [
@@ -373,3 +375,43 @@ class SadPindahMasukSerializer(CustomSerializer):
         model = SadPindahMasuk
         name = "data"
         exclude = util_columns + ["nik_datang"]
+
+
+class MiniPendudukSerializer(serializers.Serializer):
+    nik = serializers.CharField(write_only=True)
+    status_dalam_keluarga = serializers.ChoiceField(
+        status_keluarga, write_only=True
+    )
+
+
+class SadPecahKKSerializer(CustomSerializer):
+    no_kk = serializers.CharField(write_only=True)
+    anggota_kk = MiniPendudukSerializer(many=True, write_only=True)
+    rt = serializers.IntegerField(write_only=True)
+
+    def create(self, validated_data):
+        rt = get_object_or_404(SadRt, id=validated_data["rt"])
+        new_kk = SadKeluarga(no_kk=validated_data["no_kk"], rt=rt)
+        new_kk.save()
+
+        pecahkk_record = SadPecahKK(keluarga=new_kk)
+        pecahkk_record.save()
+
+        for item in validated_data["anggota_kk"]:
+            penduduk = SadPenduduk.objects.filter(nik=item["nik"]).first()
+            if not penduduk:
+                continue
+
+            penduduk.status_dalam_keluarga = item["status_dalam_keluarga"]
+            penduduk.keluarga = new_kk
+            penduduk.save()
+
+            pecahkk_record.penduduk.add(penduduk)
+
+        return pecahkk_record
+
+    class Meta:
+        model = SadPecahKK
+        name = "data"
+        read_only_fields = ["keluarga", "penduduk"]
+        exclude = util_columns

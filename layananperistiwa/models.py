@@ -291,3 +291,8 @@ class SadPindahMasuk(CustomModel):
     class Meta(CustomModel.Meta):
 
         db_table = "sad_pindah_masuk"
+
+
+class SadPecahKK(CustomModel):
+    keluarga = models.ForeignKey("v1.SadKeluarga", models.DO_NOTHING)
+    penduduk = models.ManyToManyField("v1.SadPenduduk")
