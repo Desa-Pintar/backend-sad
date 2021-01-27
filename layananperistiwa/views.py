@@ -146,10 +146,10 @@ class LaporanKelahiranViewSet(CustomView):
     permission_classes = [IsAdminUserOrReadOnly]
 
     def get_queryset(self):
-        quarter = self.request.query_params.get("rentang")
+        quarter = self.request.query_params.get("triwulan")
         year, month = quarter.split("-")
         if not year or not month:
-            raise APIException('Wrong format for "rentang"', 400)
+            raise APIException('Wrong format for "triwulan"', 400)
         if not year.isdigit() or not month.isdigit():
             raise APIException("Year and Month need to be integer format", 400)
 
@@ -178,13 +178,13 @@ class LaporanKematianViewSet(DynamicModelViewSet):
         return self.serializer_class
 
     def get_queryset(self):
-        quarter = self.request.query_params.get("rentang")
+        quarter = self.request.query_params.get("triwulan")
         if not quarter:
-            raise APIException("Need rentang parameter")
+            raise APIException("Need triwulan parameter")
 
         year, month = quarter.split("-")
         if not year or not month:
-            raise APIException('Wrong format for "rentang"', 400)
+            raise APIException('Wrong format for "triwulan"', 400)
         if not year.isdigit() or not month.isdigit():
             raise APIException("Year and Month need to be integer format", 400)
 
