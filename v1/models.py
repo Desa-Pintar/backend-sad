@@ -483,6 +483,9 @@ class SigBidang(CustomModel):
     sig_rt = models.ForeignKey(
         "SigRt", on_delete=models.DO_NOTHING, blank=True, null=True
     )
+    sig_dusun = models.ForeignKey(
+        "SigDusun", on_delete=models.DO_NOTHING, blank=True, null=True
+    )
     pemilikwarga = models.ManyToManyField(
         "SadPenduduk", through="KepemilikanWarga"
     )
@@ -491,6 +494,23 @@ class SigBidang(CustomModel):
     )
     penguasa_nonwarga = JSONField(max_length=64, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
+
+    def alamat_lengkap(self):
+        alamat_s = []
+        if self.sig_rt:
+            alamat_s.extend([self.sig_rt.rt, self.sig_rt.sig_rw.rw])
+            if self.sig_rt.sig_rw.sig_dukuh:
+                alamat_s.extend(
+                    [
+                        self.sig_rt.sig_rw.sig_dukuh.nama_dukuh,
+                        self.sig_rt.sig_rw.sig_dukuh.sig_dusun.nama_dusun,
+                    ]
+                )
+            else:
+                alamat_s.append(self.sig_rt.sig_rw.sig_dusun.nama_dusun)
+        else:
+            alamat_s.append(self.sig_dusun.nama_dusun)
+        return ", ".join(alamat_s)
 
     @property
     def daftar_pemilik(self):
@@ -666,6 +686,9 @@ class SigDukuh2(CustomModel):
 class SigRw(CustomModel):
     sig_dukuh = models.ForeignKey(
         SigDukuh, models.DO_NOTHING, blank=True, null=True
+    )
+    sig_dusun = models.ForeignKey(
+        SigDusun, models.DO_NOTHING, blank=True, null=True
     )
     rw = models.CharField(max_length=10, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
