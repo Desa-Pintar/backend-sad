@@ -375,7 +375,10 @@ class SigBidangSerializerMini(CustomSerializer):
     sig_rt = DynamicRelationField(
         "SigRtSerializer", deferred=False, embed=True
     )
-    alamat = serializers.CharField(source="alamat_lengkap", read_only=True)
+    sig_dusun = DynamicRelationField(
+        "SigDusunSerializer", deferred=True, embed=True
+    )
+    alamat_lengkap = serializers.CharField(read_only=True)
 
     class Meta:
         model = SigBidang
@@ -398,15 +401,16 @@ class SigBidangSerializerFull(CustomSerializer):
     sig_rt = DynamicRelationField(
         "SigRtSerializer", deferred=False, embed=True
     )
+    sig_dusun = DynamicRelationField(
+        "SigDusunSerializer", deferred=True, embed=True
+    )
     daftar_pemilik = serializers.ListField(
         child=PemilikBidangSerializer(), required=False
     )
     daftar_penguasa = serializers.ListField(
         child=PenguasaBidangSerializer(), required=False
     )
-    alamat_lengkap = serializers.CharField(
-        source="alamat_lengkap", read_only=True
-    )
+    alamat_lengkap = serializers.CharField(read_only=True)
 
     class Meta:
         model = SigBidang

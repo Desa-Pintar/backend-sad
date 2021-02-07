@@ -180,8 +180,9 @@ class Alamat(CustomModel):
         if self.rt:
             return f"""RT {self.rt.rt} RT {self.rw.rw},
         Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"""
-        else:
+        elif self.dusun:
             return f"Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"
+        return None
 
     def set_from_rt(self, rt_id):
         rt = get_object_or_404(SadRt, pk=rt_id)
@@ -508,7 +509,7 @@ class SigBidang(CustomModel):
                 )
             else:
                 alamat_s.append(self.sig_rt.sig_rw.sig_dusun.nama_dusun)
-        else:
+        elif self.sig_dusun:
             alamat_s.append(self.sig_dusun.nama_dusun)
         return ", ".join(alamat_s)
 
