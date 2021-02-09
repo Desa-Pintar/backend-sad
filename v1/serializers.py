@@ -144,8 +144,6 @@ class SadKeluargaSerializer(CustomSerializer):
         source="alamat.jalan_blok", required=False
     )
 
-    total_keluarga = serializers.SerializerMethodField()
-
     def create(self, data):
         alamat = Alamat()
         if data.get("dusun_id"):
@@ -199,12 +197,6 @@ class SadKeluargaSerializer(CustomSerializer):
             "created_by": {"default": serializers.CurrentUserDefault()}
         }
 
-    # Dashboard TOTAL DATA KELUARGA
-    def get_total_keluarga(self, obj):
-        totalkeluarga = SadKeluarga.objects.all().aggregate(
-            total_keluarga=Count("no_kk")
-        )
-        return totalkeluarga["total_keluarga"]
 
 
 class SadPendudukSerializer(CustomSerializer):
@@ -212,7 +204,10 @@ class SadPendudukSerializer(CustomSerializer):
         "SadKeluargaSerializer", deferred=True, embed=True
     )
 
+<<<<<<< HEAD
     total_penduduk = serializers.SerializerMethodField()
+=======
+>>>>>>> 40b74d7a8b5ab862502aac431cc7c29ea6dd6227
     class Meta:
         model = SadPenduduk
         name = "data"
@@ -227,6 +222,7 @@ class SadPendudukSerializer(CustomSerializer):
         penduduk.user = penduduk_user
         penduduk.save()
         penduduk.user.save()
+<<<<<<< HEAD
 
 
         kelahiran_id = self.context['request'].data['kelahiran_id']
@@ -237,14 +233,17 @@ class SadPendudukSerializer(CustomSerializer):
             kelahiran.save()
 
         return penduduk
+=======
+>>>>>>> 40b74d7a8b5ab862502aac431cc7c29ea6dd6227
 
-    # Dashboard TOTAL DATA PENDUDUK
-    def get_total_penduduk(self, obj):
-        totalpenduduk = SadPenduduk.objects.all().aggregate(
-            total_penduduk=Count("nama")
-        )
-        return totalpenduduk["total_penduduk"]
+        kelahiran_id = self.context['request'].query_params.get('kelahiran_id')
+        if(kelahiran_id):
+            Kelahiran = apps.get_model('layananperistiwa.SadKelahiran')
+            kelahiran = Kelahiran.objects.get(id=kelahiran_id)
+            kelahiran.penduduk = penduduk
+            kelahiran.save()
 
+        return penduduk
 
 
 class SadSarprasSerializer(CustomSerializer):
@@ -789,3 +788,8 @@ class DashboardSerializer(serializers.Serializer):
    keluarga = serializers.IntegerField()
 
 
+class CctvSerializer(DynamicModelSerializer):
+    class Meta:
+        model = Cctv
+        name = "data"
+        exclude = []

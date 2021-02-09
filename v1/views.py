@@ -743,7 +743,7 @@ class KategoriPotensiViewSet(DynamicModelViewSet):
 
 
 class PotensiViewSet(DynamicModelViewSet):
-    queryset = Potensi.objects.all().order_by("id")
+    queryset = Potensi.objects.all().order_by("-id")
     serializer_class = PotensiSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -753,8 +753,8 @@ class PotensiViewSet(DynamicModelViewSet):
     def get_queryset(self):
         kategori = self.request.query_params.get("kategori")
         if kategori:
-            return Potensi.objects.filter(kategori=kategori).all()
-        return Potensi.objects.all()
+            return Potensi.objects.filter(kategori=kategori).all().order_by("-id")
+        return Potensi.objects.all().order_by("-id")
 
 
 class KategoriPendapatanViewSet(DynamicModelViewSet):
@@ -960,9 +960,6 @@ class AbsensiViewSet(DynamicModelViewSet):
     serializer_class = AbsensiSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
-    # filter_backends = [filters.SearchFilter]
-    # search_fields = ['jam_masuk', 'pegawai__id', 'pegawai__chip_ektp']
-
 
 class AlasanIzinViewSet(DynamicModelViewSet):
     queryset = AlasanIzin.objects.all().order_by("id")
@@ -1021,3 +1018,8 @@ class DashboardViewSet(viewsets.ViewSet):
         return Response({
             "data": results
         })
+
+class CctvViewSet(DynamicModelViewSet):
+    queryset = Cctv.objects.all().order_by("-id")
+    serializer_class = CctvSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
