@@ -1178,3 +1178,10 @@ class TenagaKesehatan(models.Model):
 
     class Meta:
         db_table = "tenaga_kesehatan"
+
+class Dashboard:
+    def __init__(self, rt, rw, keluarga):
+        self.rw = rw
+        self.rt = rt
+        self.keluarga = keluarga
+        

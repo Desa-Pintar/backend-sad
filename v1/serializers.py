@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 from dynamic_rest.serializers import DynamicModelSerializer
 from dynamic_rest.fields import DynamicRelationField
 from django.db.models import Count
+from django.apps import apps
 
 from api_sad_sig.util import (
     CustomSerializer,
@@ -212,7 +213,6 @@ class SadPendudukSerializer(CustomSerializer):
     )
 
     total_penduduk = serializers.SerializerMethodField()
-
     class Meta:
         model = SadPenduduk
         name = "data"
@@ -227,6 +227,15 @@ class SadPendudukSerializer(CustomSerializer):
         penduduk.user = penduduk_user
         penduduk.save()
         penduduk.user.save()
+
+
+        kelahiran_id = self.context['request'].data['kelahiran_id']
+        if(kelahiran_id):
+            Kelahiran = apps.get_model('layananperistiwa.SadKelahiran')
+            kelahiran = Kelahiran.objects.get(id=kelahiran_id)
+            kelahiran.penduduk = penduduk
+            kelahiran.save()
+
         return penduduk
 
     # Dashboard TOTAL DATA PENDUDUK
@@ -235,6 +244,7 @@ class SadPendudukSerializer(CustomSerializer):
             total_penduduk=Count("nama")
         )
         return totalpenduduk["total_penduduk"]
+
 
 
 class SadSarprasSerializer(CustomSerializer):
@@ -772,3 +782,10 @@ class LaporanAbsensiSerializer(DynamicModelSerializer):
         model = Absensi
         name = "data"
         exclude = []
+
+class DashboardSerializer(serializers.Serializer):
+   rt = serializers.IntegerField()
+   rw = serializers.IntegerField()
+   keluarga = serializers.IntegerField()
+
+

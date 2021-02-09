@@ -5,8 +5,9 @@ from django.http import HttpResponse
 from dynamic_rest.viewsets import DynamicModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import filters
+from rest_framework import filters, viewsets
 from rest_framework.exceptions import NotFound, APIException
+from django.db.models import Count
 import pytz
 from datetime import datetime
 
@@ -1004,3 +1005,19 @@ class LaporanAbsensiViewSet(DynamicModelViewSet):
         )
 
         return queryset.order_by("id").all()
+
+class DashboardViewSet(viewsets.ViewSet):
+    serializer_class = DashboardSerializer
+    permission_classes = [IsAdminUserOrReadOnly]
+
+    def get(self, request):
+        rt = SadRt.objects.all().aggregate(count=Count("id"))
+        penduduk = SadPenduduk.objects.all().aggregate(count=Count("id"))
+        keluarga = SadKeluarga.objects.all().aggregate(count=Count("id"))
+        
+        dashboard = Dashboard(rt=rt['count'], rw=penduduk['count'], keluarga=keluarga["count"]) 
+        results = DashboardSerializer(dashboard).data
+
+        return Response({
+            "data": results
+        })
