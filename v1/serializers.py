@@ -784,8 +784,8 @@ class LaporanAbsensiSerializer(DynamicModelSerializer):
         exclude = []
 
 class DashboardSerializer(serializers.Serializer):
-   rt = serializers.IntegerField()
-   rw = serializers.IntegerField()
+   dusun = serializers.IntegerField()
+   penduduk = serializers.IntegerField()
    keluarga = serializers.IntegerField()
 
 

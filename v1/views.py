@@ -1011,11 +1011,11 @@ class DashboardViewSet(viewsets.ViewSet):
     permission_classes = [IsAdminUserOrReadOnly]
 
     def get(self, request):
-        rt = SadRt.objects.all().aggregate(count=Count("id"))
+        dusun = SadDusun.objects.all().aggregate(count=Count("id"))
         penduduk = SadPenduduk.objects.all().aggregate(count=Count("id"))
         keluarga = SadKeluarga.objects.all().aggregate(count=Count("id"))
         
-        dashboard = Dashboard(rt=rt['count'], rw=penduduk['count'], keluarga=keluarga["count"]) 
+        dashboard = Dashboard(dusun=dusun['count'], penduduk=penduduk['count'], keluarga=keluarga["count"]) 
         results = DashboardSerializer(dashboard).data
 
         return Response({

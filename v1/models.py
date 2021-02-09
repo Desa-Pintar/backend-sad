@@ -1180,8 +1180,8 @@ class TenagaKesehatan(models.Model):
         db_table = "tenaga_kesehatan"
 
 class Dashboard:
-    def __init__(self, rt, rw, keluarga):
-        self.rw = rw
-        self.rt = rt
+    def __init__(self, dusun, penduduk, keluarga):
+        self.penduduk = penduduk
+        self.dusun = dusun
         self.keluarga = keluarga
         
