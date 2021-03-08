@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from django.conf import settings
 from django.db.utils import IntegrityError
-from django.db.models import F, Count, Avg
+from django.db.models import F, Count, Sum
 from django.http import HttpResponse
 from dynamic_rest.viewsets import DynamicModelViewSet
 from rest_framework.decorators import action
@@ -1134,7 +1134,7 @@ class DemografiViewSet(viewsets.ViewSet):
                 name=F("keluarga__alamat__dusun__nama")
             )
             .values("name")
-            .annotate(y=Avg("keluarga__penghasilan")),
+            .annotate(y=Sum("keluarga__penghasilan")),
         }
         if type_param:
             data = list(query_s[type_param].all())
