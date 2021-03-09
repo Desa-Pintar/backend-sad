@@ -247,14 +247,7 @@ class SadKeluargaViewSet(DynamicModelViewSet):
             "kode_pos": data['kode_pos'], 
             "status_kesejahteraan": data['status_kesejahteraan'], 
             "penghasilan": data['penghasilan'], 
-            "status_kk": data['status_kk'],
-            "menguasai": data['menguasai']
-        }
-    
-    def transform(self,data):
-        return {
-                "no_kk": data['nik'],
-                "nama": data['kepala_keluarga.nama']
+            "status_kk": data['status_kk']
         }
 
     @action(detail=False, methods=["get"])
