@@ -240,14 +240,13 @@ class SadKeluargaViewSet(DynamicModelViewSet):
         return {
             "nik_kepala_keluarga": data['kepala_keluarga']['nik'] if 'nik' in data['kepala_keluarga'] else "",
             "nama_kepala_keluarga": data['kepala_keluarga']['nama'] if 'nama' in data['kepala_keluarga'] else "",
-            # "alamat_lengkap": data['alamat_lengkap'],
-            # "jalan_blok": data['jalan_blok'],
+            "alamat_lengkap": data['alamat_lengkap'],
+            "jalan_blok": data['jalan_blok'],
             "no_kk": data['no_kk'], 
-            # "kode_pos": data['kode_pos'], 
-            # "status_kesejahteraan": data['status_kesejahteraan'], 
-            # "penghasilan": data['penghasilan'], 
-            # "status_kk": data['status_kk'],
-            # "menguasai": data['menguasai']
+            "kode_pos": data['kode_pos'], 
+            "status_kesejahteraan": data['status_kesejahteraan'], 
+            "penghasilan": data['penghasilan'], 
+            "status_kk": data['status_kk']
         }
 
     @action(detail=False, methods=["get"])
