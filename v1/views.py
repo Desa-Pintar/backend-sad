@@ -250,6 +250,12 @@ class SadKeluargaViewSet(DynamicModelViewSet):
             "status_kk": data['status_kk'],
             "menguasai": data['menguasai']
         }
+    
+    def transform(self,data):
+        return {
+                "no_kk": data['nik'],
+                "nama": data['kepala_keluarga.nama']
+        }
 
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
