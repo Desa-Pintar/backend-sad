@@ -594,7 +594,6 @@ class SadLahirmatiViewSet(CustomView):
             "Nama Ibu": "nama_ibu",
             "Anak Ke": "kelahiran_ke",
             "Nama Pelapor": "nama_pelapor"
-
         }
         data = (
             self.get_queryset()
