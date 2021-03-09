@@ -203,7 +203,7 @@ class LaporanMonografiViewSet(DynamicModelViewSet):
         )
         response[
             "Content-Disposition"
-        ] = 'attachment; filename="Monografi.xls"'
+        ] = 'attachment; filename="Monografi.xlsx"'
         return response
 
     def get_queryset(self):
@@ -349,7 +349,7 @@ class LaporanKelahiranViewSet(CustomView):
         )
         response[
             "Content-Disposition"
-        ] = 'attachment; filename="TriwulanKelahiran.xls"'
+        ] = 'attachment; filename="TriwulanKelahiran.xlsx"'
         return response
 
 
@@ -360,6 +360,54 @@ class SadKelahiranViewSet(CustomView):
 
     filter_backends = [filters.SearchFilter]
     search_fields = ["nama", "nama_ayah", "nama_ibu"]
+
+    @action(detail=False, methods=["get"])
+    def ekspor(self, request):
+        extras = {
+            "Nama": "nama",
+            "Jenis Kelamin": "jenis_kelamin",
+            "Tempat Kelahiran": "tempat_kelahiran",
+            "Tanggal Kelahiran": "tanggal_kelahiran",
+            "Jam Kelahiran": "jam",
+            "Jenis Kelahiran": "jenis_kelahiran",
+            "Tempat Dilahirkan": "tempat_dilahirkan",
+            "Penolong Kelahiran": "penolong_kelahiran",
+            "Berat Bayi": "berat_bayi",
+            "Panjang Bayi": "panjang_bayi",
+            "NIK Ayah": "nik_ayah",
+            "Nama Ayah": "nama_ayah",
+            "NIK Ibu": "nik_ibu",
+            "Nama Ibu": "nama_ibu",
+            "Anak Ke": "kelahiran_ke"
+        }
+        data = (
+            self.get_queryset()
+            .extra(select=extras)
+            .values(*extras.keys())
+            .all()
+        )
+
+        workbook = Workbook()
+        sheet = workbook.active
+
+        headers = [i for i in extras.keys()]
+        for index, value in enumerate(headers):
+            sheet.cell(row=1, column=index + 1).value = value
+
+        for i, x in enumerate(data):
+            for idx, value in enumerate(x.values()):
+                sheet.cell(row=i + 2, column=idx + 1).value = value
+
+        output = BytesIO()
+        workbook.save(output)
+        response = HttpResponse(
+            output.getvalue(),
+            content_type="application/vnd.ms-excel",
+        )
+        response[
+            "Content-Disposition"
+        ] = 'attachment; filename="DataKelahiran.xlsx"'
+        return response
 
 
 class LaporanKematianViewSet(DynamicModelViewSet):
@@ -464,7 +512,7 @@ class LaporanKematianViewSet(DynamicModelViewSet):
         )
         response[
             "Content-Disposition"
-        ] = 'attachment; filename="TriwulanKematian.xls"'
+        ] = 'attachment; filename="TriwulanKematian.xlsx"'
         return response
 
 
@@ -475,6 +523,50 @@ class SadKematianViewSet(CustomView):
 
     filter_backends = [filters.SearchFilter]
     search_fields = ["nama", "sebab_kematian"]
+
+    @action(detail=False, methods=["get"])
+    def ekspor(self, request):
+        extras = {
+            "NIK": "sad_penduduk.nik",
+            "Nama": "sad_penduduk.nama",
+            "Jenis Kelamin": "sad_penduduk.jk",
+            "Tempat Lahir": "sad_penduduk.tempat_lahir",
+            "Tanggal Lahir": "sad_penduduk.tgl_lahir",
+            "Tempat Kematian": "tempat_kematian",
+            "Tanggal Kematian": "tanggal_kematian",
+            "Jam Kematian": "jam",
+            "Sebab Kematian": "sebab_kematian",
+            "Yang Menerangkan": "yang_menerangkan",
+            "Nama Pelapor": "nama_pelapor",
+        }
+        data = (
+            self.get_queryset()
+            .extra(select=extras, tables=("sad_penduduk",))
+            .values(*extras.keys())
+            .all()
+        )
+
+        workbook = Workbook()
+        sheet = workbook.active
+
+        headers = [i for i in extras.keys()]
+        for index, value in enumerate(headers):
+            sheet.cell(row=1, column=index + 1).value = value
+
+        for i, x in enumerate(data):
+            for idx, value in enumerate(x.values()):
+                sheet.cell(row=i + 2, column=idx + 1).value = value
+
+        output = BytesIO()
+        workbook.save(output)
+        response = HttpResponse(
+            output.getvalue(),
+            content_type="application/vnd.ms-excel",
+        )
+        response[
+            "Content-Disposition"
+        ] = 'attachment; filename="DataKematian.xlsx"'
+        return response
 
 
 class SadLahirmatiViewSet(CustomView):
@@ -538,7 +630,6 @@ class SadPindahKeluarViewSet(CustomView):
 
         data["anggota_keluar"] = penduduk_data
         return Response(data)
-
 
 class SadPindahMasukViewSet(CustomView):
     queryset = SadPindahMasuk.objects.all().order_by("id")
