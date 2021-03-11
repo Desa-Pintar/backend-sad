@@ -56,6 +56,14 @@ class UserViewSet(DynamicModelViewSet):
             }
             payload["profile"] = profile
         return Response(payload)
+    
+    @action(detail=False, methods=["get"])
+    def group(self, request):
+        data = User.objects.filter(groups__name="admin")
+
+        result=map(lambda user :UserSerializer(user).data,data)
+        print(data.query)
+        return Response({"data":result})
 
 
 class GroupViewSet(DynamicModelViewSet):

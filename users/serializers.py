@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from dynamic_rest.serializers import DynamicModelSerializer, fields
+from dynamic_rest.fields import DynamicRelationField
 
 
 class GroupSerializer(DynamicModelSerializer):

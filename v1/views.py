@@ -238,7 +238,6 @@ class SadKeluargaViewSet(DynamicModelViewSet):
 
     def transform(self,data):
         return {
-            "id": data['id'],
             "nik_kepala_keluarga": data['kepala_keluarga']['nik'] if 'nik' in data['kepala_keluarga'] else "",
             "nama_kepala_keluarga": data['kepala_keluarga']['nama'] if 'nama' in data['kepala_keluarga'] else "",
             # "alamat_lengkap": data['alamat_lengkap'],
