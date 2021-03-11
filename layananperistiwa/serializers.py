@@ -359,9 +359,7 @@ class SadPindahMasukSerializer(CustomSerializer):
     def create(self, validated_data):
         anggota = validated_data.pop("anggota")
 
-        print("This 0")
         if SadKeluarga.objects.filter(no_kk=validated_data["no_kk"]).exists():
-            print("This x")
             raise APIException("Nomor KK Sudah terdaftar", 400)
 
         data_alamat = {
@@ -369,8 +367,8 @@ class SadPindahMasukSerializer(CustomSerializer):
             "dusun": validated_data.pop("dusun_id", None),
         }
         nama_alamat = validated_data.pop("nama_alamat")
-        if not data_alamat.get("rt") and not data_alamat.get("dusun"):
-            raise APIException("Need dusun_id or rt_id", 400)
+        if not data_alamat.get("dusun"):
+            raise APIException("Need dusun_id ", 400)
 
         keluarga_data = validated_data.copy()
         print("This 1")
@@ -389,22 +387,15 @@ class SadPindahMasukSerializer(CustomSerializer):
             return Response({"msg": "Gagal menyimpan data keluarga"}, 400)
         keluarga.save()
 
-        rt_id = data_alamat.get("rt")
         dusun_id = data_alamat.get("dusun_id")
         if keluarga.alamat:
-            if rt_id:
-                keluarga.alamat.set_from_rt(rt_id)
-            else:
-                keluarga.alamat.set_from_dusun(dusun_id)
+            keluarga.alamat.set_from_dusun(dusun_id)
         else:
             keluarga.alamat = Alamat()
-            if rt_id:
-                keluarga.alamat.set_from_rt(rt_id)
-            else:
-                keluarga.alamat.set_from_dusun(dusun_id)
+            keluarga.alamat.set_from_dusun(dusun_id)
         keluarga.alamat.alamat = nama_alamat
         keluarga.alamat.save()
-        print(validated_data)
+
         sad_masuk = SadPindahMasuk(**validated_data)
         sad_masuk.alamat = keluarga.alamat
 
@@ -417,14 +408,12 @@ class SadPindahMasukSerializer(CustomSerializer):
             except Exception:
                 keluarga.delete()
                 return Response({"msg": "Data Penduduk Gagal"})
-            print(str(item["tgl_lahir"]))
             user = create_or_reactivate_user(
                 item["nik"], str(item["tgl_lahir"]).replace("-", "")
             )
             penduduk.user = user
             penduduk.keluarga = keluarga
             penduduk.save()
-        print("This 2")
 
         sad_masuk.save()
         return sad_masuk
@@ -433,6 +422,7 @@ class SadPindahMasukSerializer(CustomSerializer):
         model = SadPindahMasuk
         name = "data"
         exclude = util_columns + ["nik_datang"]
+        read_only_fields = ["anggota_masuk"]
 
 
 class MiniPendudukSerializer(serializers.Serializer):
