@@ -45,7 +45,10 @@ LOGGING = {
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # This Desa
-DESA_ID = 7505020008
+try:
+    DESA_ID = env.str("DESA_ID")
+except Exception:
+    DESA_ID = 7505020008
 # DESA_ID = 3515140008
 
 # SECURITY WARNING: keep the secret key used in production secret!

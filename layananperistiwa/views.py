@@ -378,7 +378,7 @@ class SadKelahiranViewSet(CustomView):
             "Nama Ayah": "nama_ayah",
             "NIK Ibu": "nik_ibu",
             "Nama Ibu": "nama_ibu",
-            "Anak Ke": "kelahiran_ke"
+            "Anak Ke": "kelahiran_ke",
         }
         data = (
             self.get_queryset()
@@ -593,7 +593,7 @@ class SadLahirmatiViewSet(CustomView):
             "NIK Ibu": "nik_ibu",
             "Nama Ibu": "nama_ibu",
             "Anak Ke": "kelahiran_ke",
-            "Nama Pelapor": "nama_pelapor"
+            "Nama Pelapor": "nama_pelapor",
         }
         data = (
             self.get_queryset()
@@ -678,6 +678,7 @@ class SadPindahKeluarViewSet(CustomView):
         data["anggota_keluar"] = penduduk_data
         return Response(data)
 
+
 class SadPindahMasukViewSet(CustomView):
     queryset = SadPindahMasuk.objects.all().order_by("id")
     serializer_class = SadPindahMasukSerializer
@@ -696,6 +697,6 @@ class SadPecahKKViewSet(CustomView):
     search_fields = ["keluarga", "penduduk"]
 
     def get_serializer_class(self):
-        if self.action in ["update", "retrieve", "delete"]:
+        if self.action in ["update", "delete"]:
             raise NotFound("Operasi ini tidak tersedia")
         return SadPecahKKSerializer
