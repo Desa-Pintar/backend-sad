@@ -4,6 +4,7 @@ from dynamic_rest.serializers import DynamicModelSerializer
 from dynamic_rest.fields import DynamicRelationField
 from django.db.models import Count
 from django.apps import apps
+from django.core.files.uploadedfile import UploadedFile
 
 from api_sad_sig.util import (
     CustomSerializer,
@@ -502,7 +503,7 @@ class PotensiSerializer(DynamicModelSerializer):
     kategori = DynamicRelationField(
         "KategoriPotensiSerializer", deferred=True, embed=True
     )
-
+    
     class Meta:
         model = Potensi
         name = "data"

@@ -881,7 +881,7 @@ class LaporViewSet(CustomView):
 class KategoriInformasiViewSet(DynamicModelViewSet):
     queryset = KategoriInformasi.objects.all().order_by("id")
     serializer_class = KategoriInformasiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [filters.SearchFilter]
     search_fields = ["nama"]
@@ -899,7 +899,7 @@ class InformasiViewSet(DynamicModelViewSet):
 class KategoriPotensiViewSet(DynamicModelViewSet):
     queryset = KategoriPotensi.objects.all().order_by("id")
     serializer_class = KategoriPotensiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [filters.SearchFilter]
     search_fields = ["nama"]
@@ -920,6 +920,44 @@ class PotensiViewSet(DynamicModelViewSet):
                 Potensi.objects.filter(kategori=kategori).all().order_by("-id")
             )
         return Potensi.objects.all().order_by("-id")
+    
+    @action(detail=False, methods=["post"])
+    def promosi(self, request):
+        id = self.request.data["bidang"]
+        bidang = SigBidang.objects.filter(id=id).first()
+
+        kategori = KategoriPotensi.objects.filter(id=1).first()
+
+        if bidang is None:
+            return Response({"success":False, "message":"Bidang Tidak Ditemukan"})
+
+        if kategori is None:
+            return Response({"success":False, "message":"Kategori Tidak Ditemukan"})
+
+        nama_usaha = self.request.data["nama_usaha"]
+        harga = self.request.data["harga"]
+        jenis_promosi = self.request.data["jenis_promosi"]
+        no_telp = self.request.data["no_telp"]
+        judul = self.request.data["judul"]
+        isi = self.request.data["isi"]
+        koordinat = f"{bidang.latitude},{bidang.longitude}"
+        gambar = bidang.gambar_atas
+        
+        promosi = Potensi.objects.create(
+            nama_usaha=nama_usaha,
+            harga=harga,
+            jenis_promosi=jenis_promosi,
+            no_telp=no_telp,
+            judul=judul,
+            isi=isi,
+            koordinat=koordinat,
+            gambar=gambar,
+            kategori=kategori,
+        )
+
+        data = PotensiSerializer(promosi)
+
+        return Response({"success":True, "data":data.data})
 
 
 class KategoriPendapatanViewSet(DynamicModelViewSet):
