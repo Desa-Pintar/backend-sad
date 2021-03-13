@@ -926,7 +926,7 @@ class PotensiViewSet(DynamicModelViewSet):
         id = self.request.data["bidang"]
         bidang = SigBidang.objects.filter(id=id).first()
 
-        kategori = KategoriPotensi.objects.filter(id=1).first()
+        kategori = KategoriPotensi.objects.filter(id=2).first()
 
         if bidang is None:
             return Response({"success":False, "message":"Bidang Tidak Ditemukan"})
