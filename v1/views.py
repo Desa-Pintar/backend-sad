@@ -940,7 +940,7 @@ class PotensiViewSet(DynamicModelViewSet):
         # no_telp = self.request.data["no_telp"]
         # judul = self.request.data["judul"]
         # isi = self.request.data["isi"]
-        koordinat = f"{bidang.latitude},{bidang.longitude}"
+        koordinat = f"{{\"lat\":{bidang.latitude},\"lng\":{bidang.longitude}}}"
         gambar = bidang.gambar_atas
         
         promosi = Potensi.objects.create(
