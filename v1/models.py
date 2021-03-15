@@ -756,6 +756,38 @@ class SigArahan(CustomModel):
 
         db_table = "sig_arahan"
 
+class SigTopomini(CustomModel):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+    geometry = JSONField(blank=True, null=True)
+
+    class Meta(CustomModel.Meta):
+
+        db_table = "sig_topomini"
+
+
+class SigRumahBantuan(CustomModel):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+    geometry = JSONField(blank=True, null=True)
+
+    class Meta(CustomModel.Meta):
+
+        db_table = "sig_rumahbantuan"
+
+class SigRumahSehat(CustomModel):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+    geometry = JSONField(blank=True, null=True)
+
+    class Meta(CustomModel.Meta):
+
+        db_table = "sig_rumahsehat"
+
+class SigUmkm(CustomModel):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+    geometry = JSONField(blank=True, null=True)
+
+    class Meta(CustomModel.Meta):
+
+        db_table = "sig_umkm"
 
 class SigSadDesa(CustomModel):
     sad_desa = models.ForeignKey(

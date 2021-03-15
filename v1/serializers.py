@@ -326,6 +326,30 @@ class SigArahanSerializer(CustomSerializer):
         name = "data"
         exclude = []
 
+class SigTopominiSerializer(CustomSerializer):
+    class Meta:
+        model = SigTopomini
+        name = "data"
+        exclude = []
+
+class SigRumahBantuanSerializer(CustomSerializer):
+    class Meta:
+        model = SigRumahBantuan
+        name = "data"
+        exclude = []
+
+class SigRumahSehatSerializer(CustomSerializer):
+    class Meta:
+        model = SigRumahSehat
+        name = "data"
+        exclude = []
+
+class SigUmkmSerializer(CustomSerializer):
+    class Meta:
+        model = SigUmkm
+        name = "data"
+        exclude = []
+        
 class SigPemilikSerializer(CustomSerializer):
     pemilik = DynamicRelationField("SadPendudukSerializer", deferred=True, embed=True)
 

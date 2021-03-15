@@ -717,6 +717,102 @@ class SigArahanViewSet(CustomView):
 
         return Response()
 
+class SigTopominiViewSet(CustomView):
+    queryset = SigTopomini.objects.all().order_by("id")
+    serializer_class = SigTopominiSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigTopomini.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigTopomini.objects.create(**item)
+
+        return Response()
+
+class SigRumahBantuanViewSet(CustomView):
+    queryset = SigRumahBantuan.objects.all().order_by("id")
+    serializer_class = SigRumahBantuanSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigRumahBantuan.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigRumahBantuan.objects.create(**item)
+
+        return Response()
+
+class SigRumahSehatViewSet(CustomView):
+    queryset = SigRumahSehat.objects.all().order_by("id")
+    serializer_class = SigRumahSehatSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigRumahSehat.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigRumahSehat.objects.create(**item)
+
+        return Response()
+
+class SigUmkmViewSet(CustomView):
+    queryset = SigUmkm.objects.all().order_by("id")
+    serializer_class = SigUmkmSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigUmkm.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigUmkm.objects.create(**item)
+
+        return Response()
+
 class SigDusunViewSet(CustomView):
     queryset = SigDusun.objects.all().order_by("id")
     serializer_class = SigDusunSerializer
