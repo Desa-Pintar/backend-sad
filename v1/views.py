@@ -11,6 +11,7 @@ from rest_framework.exceptions import NotFound, APIException
 import pytz
 from datetime import datetime
 from openpyxl import Workbook
+from rest_framework.permissions import AllowAny
 
 
 import pandas
@@ -1339,7 +1340,7 @@ class TenagaKesehatanViewSet(DynamicModelViewSet):
 class AbsensiViewSet(DynamicModelViewSet):
     queryset = Absensi.objects.all().order_by("-id")
     serializer_class = AbsensiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [AllowAny]
 
 
 class AlasanIzinViewSet(DynamicModelViewSet):
