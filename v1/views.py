@@ -560,6 +560,7 @@ class SigBidangViewSet(CustomView):
             print(item["properties"])
             data = {
                 "nbt": item["properties"]["NBT"][:5],
+                "luas": item["properties"]["LUAS"][:4],
                 "longitude": item["properties"]["long"],
                 "latitude": item["properties"]["lat"],
                 "geometry": item["geometry"],
