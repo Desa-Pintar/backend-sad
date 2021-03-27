@@ -50,7 +50,6 @@ class BaseAdminSuratSerializer(CustomSerializer):
         name = "data"
         exclude = [
             "penduduk",
-            "desa",
             "jenis",
             "created_by",
             "created_at",
