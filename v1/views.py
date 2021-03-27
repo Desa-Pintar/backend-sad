@@ -11,6 +11,7 @@ from rest_framework.exceptions import NotFound, APIException
 import pytz
 from datetime import datetime
 from openpyxl import Workbook
+from rest_framework.permissions import AllowAny
 
 
 import pandas
@@ -558,7 +559,8 @@ class SigBidangViewSet(CustomView):
         for item in data["features"]:
             print(item["properties"])
             data = {
-                "nbt": item["properties"]["NBT"][:20],
+                "nbt": item["properties"]["NBT"][:5],
+                "luas": item["properties"]["Luas"][:4],
                 "longitude": item["properties"]["long"],
                 "latitude": item["properties"]["lat"],
                 "geometry": item["geometry"],
@@ -714,6 +716,102 @@ class SigArahanViewSet(CustomView):
                 "geometry": item["geometry"],
             }
             SigArahan.objects.create(**item)
+
+        return Response()
+
+class SigTopominiViewSet(CustomView):
+    queryset = SigTopomini.objects.all().order_by("id")
+    serializer_class = SigTopominiSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigTopomini.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigTopomini.objects.create(**item)
+
+        return Response()
+
+class SigRumahBantuanViewSet(CustomView):
+    queryset = SigRumahBantuan.objects.all().order_by("id")
+    serializer_class = SigRumahBantuanSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigRumahBantuan.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigRumahBantuan.objects.create(**item)
+
+        return Response()
+
+class SigRumahSehatViewSet(CustomView):
+    queryset = SigRumahSehat.objects.all().order_by("id")
+    serializer_class = SigRumahSehatSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigRumahSehat.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigRumahSehat.objects.create(**item)
+
+        return Response()
+
+class SigUmkmViewSet(CustomView):
+    queryset = SigUmkm.objects.all().order_by("id")
+    serializer_class = SigUmkmSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigUmkm.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigUmkm.objects.create(**item)
 
         return Response()
 
@@ -881,7 +979,7 @@ class LaporViewSet(CustomView):
 class KategoriInformasiViewSet(DynamicModelViewSet):
     queryset = KategoriInformasi.objects.all().order_by("id")
     serializer_class = KategoriInformasiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [filters.SearchFilter]
     search_fields = ["nama"]
@@ -899,7 +997,7 @@ class InformasiViewSet(DynamicModelViewSet):
 class KategoriPotensiViewSet(DynamicModelViewSet):
     queryset = KategoriPotensi.objects.all().order_by("id")
     serializer_class = KategoriPotensiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = [filters.SearchFilter]
     search_fields = ["nama"]
@@ -920,6 +1018,44 @@ class PotensiViewSet(DynamicModelViewSet):
                 Potensi.objects.filter(kategori=kategori).all().order_by("-id")
             )
         return Potensi.objects.all().order_by("-id")
+    
+    @action(detail=False, methods=["post"])
+    def promosi(self, request):
+        id = self.request.data["bidang"]
+        bidang = SigBidang.objects.filter(id=id).first()
+
+        kategori = KategoriPotensi.objects.filter(id=2).first()
+
+        if bidang is None:
+            return Response({"success":False, "message":"Bidang Tidak Ditemukan"})
+
+        if kategori is None:
+            return Response({"success":False, "message":"Kategori Tidak Ditemukan"})
+
+        nama_usaha = self.request.data["nama_usaha"]
+        harga = self.request.data["harga"]
+        jenis_promosi = self.request.data["jenis_promosi"]
+        # no_telp = self.request.data["no_telp"]
+        # judul = self.request.data["judul"]
+        # isi = self.request.data["isi"]
+        koordinat = f"{{\"lat\":{bidang.latitude},\"lng\":{bidang.longitude}}}"
+        gambar = bidang.gambar_atas
+        
+        promosi = Potensi.objects.create(
+            nama_usaha=nama_usaha,
+            harga=harga,
+            jenis_promosi=jenis_promosi,
+            # no_telp=no_telp,
+            # judul=judul,
+            # isi=isi,
+            koordinat=koordinat,
+            gambar=gambar,
+            kategori=kategori,
+        )
+
+        data = PotensiSerializer(promosi)
+
+        return Response({"success":True, "data":data.data})
 
 
 class KategoriPendapatanViewSet(DynamicModelViewSet):
@@ -1205,7 +1341,7 @@ class TenagaKesehatanViewSet(DynamicModelViewSet):
 class AbsensiViewSet(DynamicModelViewSet):
     queryset = Absensi.objects.all().order_by("-id")
     serializer_class = AbsensiSerializer
-    permission_classes = [IsAdminUserOrReadOnly]
+    permission_classes = [AllowAny]
 
 
 class AlasanIzinViewSet(DynamicModelViewSet):
