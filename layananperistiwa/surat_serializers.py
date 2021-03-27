@@ -23,7 +23,6 @@ class ListSuratSerializer(CustomSerializer):
         name = "data"
         exclude = [
             "atribut",
-            "penduduk",
             "jenis",
             "created_by",
             "created_at",
