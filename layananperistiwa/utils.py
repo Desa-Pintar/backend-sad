@@ -14,7 +14,7 @@ def render_new_mail(mail_type, data):
     template_name = mail_type + ".html"
     logo_path = template_folder + "/logo.png"
     template = template_env.get_template(template_name)
-    desa = SadDesa.objects.get(settings.DESA_ID)
+    desa = SadDesa.objects.get(pk=settings.DESA_ID)
     output = template.render(
         media_root=media_root,
         desa=desa,
