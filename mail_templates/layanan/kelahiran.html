@@ -1,0 +1,78 @@
+{% extends 'layanan/base.html' %}
+
+{% block content %}
+<div>
+	<br>
+	<center>
+		<h3><u>SURAT KELAHIRAN</u></h3>
+		<p>{{surat.no_surat}}</p>
+	</center>
+
+	<br>
+	{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
+	{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
+	{% set tanggal = surat.serialized_atribut['kelahiran'].tanggal_kelahiran%}
+	<table style="width:100%;">
+		<tr>
+			<td colspan=3>
+				Yang bertanda tangan dibawah ini Kepala Desa {{desa.nama_desa.title()}}, Kec. {{desa.kecamatan.nama_kecamatan.title()}}, {{desa.kecamatan.kab_kota.nama_kab_kota.title()}} menerangkan bahwa pada :
+			</td>
+		</tr>
+		<tr class="data-row">
+			<td>Hari</td>
+			<td>:</td>
+			<td>{{nama_hari[tanggal.weekday()].title()}}</td>
+		</tr>
+		<tr class="data-row">
+			<td>Tanggal</td>
+			<td>:</td>
+			<td>
+				{{tanggal.day}} {{nama_bulan[tanggal.month].title()}} {{tanggal.year}}
+			</td>
+		</tr>
+		<tr class="data-row">
+			<td>Di</td>
+			<td>:</td>
+			<td>{{desa.nama_desa}}</td>
+		</tr>
+	</table>
+	<p>Telah lahir seorang Anak Pria/Wanita bernama:</p>
+	<center><h5><b><u>{{surat.serialized_atribut['kelahiran'].nama}}</u></b></h5></center>
+	<p>Dari seorang Ibu bernama:</p>
+	<center><h5>{{surat.serialized_atribut['kelahiran'].ibu.nama}}</h5></center>
+	<p>Istri dari:</p>
+	<center><h5>{{surat.serialized_atribut['kelahiran'].ayah.nama}}</h5></center>
+
+	<p>
+	Demikianlah surat keterangan ini dibuat atas dasar sebenarnya.
+	</p>
+
+	<table style="margin-top:40px;width:100%;">
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td style="width:40%">
+				&nbsp;
+			</td>
+			<td style="text-align: center;">
+				Pontolo, {{tanggal}}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				&nbsp;
+			</td>
+			<td style="width:40%;">
+				&nbsp;
+			</td>
+			<td style="text-align: center;">
+				Kepala Desa Pontolo
+				<p style="margin-top:80px;">
+				<b><u>{{surat.pegawai.nama}}</u></b>
+				</p>
+			</td>
+		</tr>
+	</table>
+</div>
+{% endblock %}

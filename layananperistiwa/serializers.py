@@ -274,10 +274,28 @@ class LaporanKematianSerializer(CustomSerializer):
         ]
 
 
+class SadKematianSuratSerializer(DynamicModelSerializer):
+    penduduk = DynamicRelationField(
+        "v1.serializers.SadPendudukMiniSerializer", deferred=False, embed=True
+    )
+
+    class Meta:
+        model = SadKematian
+        name = "data"
+        fields = ["penduduk", "tanggal_kematian"]
+
+
 class SadKematianSerializer(CustomSerializer):
     penduduk = DynamicRelationField(
         "v1.serializers.SadPendudukSerializer", deferred=True, embed=True
     )
+
+    def create(self, validated_data):
+        obj = SadKematian(**validated_data)
+        obj.save()
+        obj.penduduk.delete()
+        obj.penduduk.save()
+        return obj
 
     class Meta:
         model = SadKematian
