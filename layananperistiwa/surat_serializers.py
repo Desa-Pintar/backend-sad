@@ -24,7 +24,6 @@ class ListSuratSerializer(CustomSerializer):
         exclude = [
             "atribut",
             "penduduk",
-            "desa",
             "jenis",
             "created_by",
             "created_at",
@@ -41,11 +40,7 @@ class BaseAdminSuratSerializer(CustomSerializer):
     )
 
     def create(self, data):
-        print(data)
-        user = self.context["request"].user
-        surat = LayananSurat(
-            desa_id=user.area.desa_id, jenis=self.Meta.jenis_surat, **data
-        )
+        surat = LayananSurat(jenis=self.Meta.jenis_surat, **data)
         if not data.get("atribut"):
             surat.atribut = {}
         surat.save()
@@ -70,10 +65,7 @@ class BaseAdminSuratSerializer(CustomSerializer):
 class BasePendudukSuratSerializer(CustomSerializer):
     def create(self, data):
         print(data)
-        user = self.context["request"].user
-        surat = LayananSurat(
-            desa_id=user.area.desa_id, jenis=self.Meta.jenis_surat, **data
-        )
+        surat = LayananSurat(jenis=self.Meta.jenis_surat, **data)
         surat.save()
         return surat
 
@@ -81,7 +73,6 @@ class BasePendudukSuratSerializer(CustomSerializer):
         model = LayananSurat
         name = "data"
         exclude = [
-            "desa",
             "pegawai",
             "penduduk",
             "jenis",
