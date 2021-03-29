@@ -26,9 +26,24 @@
 				width:150px;
 				height: 120px;
 			}
+			#bordered {
+				border: 1px solid black;
+				border-collapse: collapse;
+				width: 80%;
+			}
+			#bordered th{
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+			#bordered td{
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
 		</style>
 	</head>
 	<body>
+
+		<div style="width:80%;margin:auto;">
 		<header>
 			<div id="logo">
 				<img src="{{media_root}}/{{desa.logo}}"></img>
@@ -46,7 +61,6 @@
 
 		<hr>
 
-		<div style="width:80%;margin:auto;">
 		{% block content %}
 		{% endblock %}
 		</div>

@@ -27,7 +27,7 @@
 					</tr>
 					<tr>
 						<td colspan=3>
-							Menerangkan Kepada:
+							Dengan ini menerangkan bahwa:
 						</td>
 					</tr>
 					<tr class="data-row">
@@ -36,9 +36,14 @@
 						<td>{{surat.penduduk.nama}}</td>
 					</tr>
 					<tr class="data-row">
-						<td>Umur</td>
+						<td>NIK</td>
 						<td>:</td>
-						<td>{{surat.penduduk.age}}</td>
+						<td>{{surat.penduduk.nik}}</td>
+					</tr>
+					<tr class="data-row">
+						<td>Tempat, Tanggal Lahir</td>
+						<td>:</td>
+						<td>{{surat.penduduk.tempat_lahir}}, {{surat.penduduk.tanggal_lahir}}</td>
 					</tr>
 					<tr class="data-row">
 						<td>Pekerjaan</td>
@@ -51,11 +56,10 @@
 						<td>{{surat.penduduk.alamat}}</td>
 					</tr>
 				</table>
-				{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
-				{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
-				{% set tanggal_acara = surat.serialized_atribut['tanggal']%}
-				<p> Bahwa yang bersangkutan diatas adalah  Benar-benar Ahli Waris / Anak  Dari Almarhum {{surat.atribut['nama_jenazah']}} dan Benar – benar Telah Menyelenggarakan Penguburan Almarhum {{surat.atribut['nama_jenazah']}} Pada Hari {{nama_hari[tanggal_acara.weekday()].title()}} {{tanggal_acara.day}} {{nama_bulan[tanggal_acara.month].title()}} {{tanggal_acara.year}}</p>
-				<p>Demikian surat keterangan ini dibuat dengan sebenarnya dan untuk dipergunakan sebagaimana semestinya.</p>
+				<p>
+				Bahwa yang bersangkutan diatas benar-benar Penduduk Desa {{desa.nama_desa.title()}} Kec.{{desa.kecamatan.nama_kecamatan.title()}} {{desa.kecamatan.kab_kota.nama_kab_kota.title()}}  dan Benar-benar telah berpisah dengan {% if surat.penduduk.jk == 'Perempuan'%} suaminya {% else %} istrinya {% endif %} atas nama ( {{surat.atribut['nama_pasangan']}} ). Namun masih dalam Proses Perceraian di {{surat.atribut['nama_instansi_pengadilan']}}.
+				</p>
+				<p>Demikian Surat keterangan Ini dibuat untuk dipergunakan dalam {{surat.atribut['keperluan']}}</p>
 
 				<table style="margin-top:40px;width:100%;">
 					<tr>

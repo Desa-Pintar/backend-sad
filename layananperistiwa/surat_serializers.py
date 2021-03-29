@@ -342,7 +342,144 @@ class PendudukSuratKematianSerializer(BasePendudukSuratSerializer):
         jenis_surat = "kematian"
 
 
+class AtributIzinPesta(serializers.Serializer):
+    tanggal = serializers.CharField()
+    waktu_mulai = serializers.CharField()
+    tempat = serializers.CharField()
+    jenis_pesta = serializers.ListField(
+        child=serializers.CharField(max_length=64)
+    )
+
+    tanggal_pesta = serializers.SerializerMethodField()
+
+    def get_tanggal_pesta(self, obj):
+        return datetime.strptime(obj["tanggal"], "%Y-%m-%d")
+
+
+class AdminIzinPestaSerializer(BaseAdminSuratSerializer):
+    atribut = AtributIzinPesta()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "izinpesta"
+
+
+class PendudukIzinPestaSerializer(BasePendudukSuratSerializer):
+    atribut = AtributIzinPesta()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "izinpesta"
+
+
+class AtributIzinKeramaian(serializers.Serializer):
+    tanggal = serializers.CharField()
+    waktu_mulai = serializers.CharField()
+    tempat = serializers.CharField()
+    jenis_pesta = serializers.CharField()
+
+    tanggal_pesta = serializers.SerializerMethodField()
+
+    def get_tanggal_pesta(self, obj):
+        return datetime.strptime(obj["tanggal"], "%Y-%m-%d")
+
+
+class AdminIzinKeramaianSerializer(BaseAdminSuratSerializer):
+    atribut = AtributIzinKeramaian()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "izinkeramaian"
+
+
+class PendudukIzinKeramaianSerializer(BasePendudukSuratSerializer):
+    atribut = AtributIzinKeramaian()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "izinkeramaian"
+
+
+class AtributKehilangan(serializers.Serializer):
+    nama_barang = serializers.CharField()
+    detail_barang = serializers.CharField()
+
+
+class AdminKehilanganSerializer(BaseAdminSuratSerializer):
+    atribut = AtributKehilangan()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "kehilangan"
+
+
+class PendudukKehilanganSerializer(BasePendudukSuratSerializer):
+    atribut = AtributKehilangan()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "kehilangan"
+
+
+class AtributDudaJanda(serializers.Serializer):
+    nama_mantan_pasangan = serializers.CharField()
+    tahun_berpisah = serializers.CharField()
+
+
+class AdminDudaJandaSerializer(BaseAdminSuratSerializer):
+    atribut = AtributDudaJanda()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "dudajanda"
+
+
+class PendudukDudaJandaSerializer(BasePendudukSuratSerializer):
+    atribut = AtributDudaJanda()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "dudajanda"
+
+
+class AtributKeteranganPisah(serializers.Serializer):
+    nama_pasangan = serializers.CharField()
+    nama_instansi_pengadilan = serializers.CharField()
+    keperluan = serializers.CharField()
+
+
+class AdminKetPisahSerializer(BaseAdminSuratSerializer):
+    atribut = AtributKeteranganPisah()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "ket_pisah"
+
+
+class PendudukKetPisahSerializer(BasePendudukSuratSerializer):
+    atribut = AtributKeteranganPisah()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "ket_pisah"
+
+
 serializer_list = {
+    "ket_pisah": (
+        AdminKetPisahSerializer,
+        PendudukKetPisahSerializer,
+        "Surat Keterangan Pisah (Belum Cerai)",
+    ),
+    "dudajanda": (
+        AdminDudaJandaSerializer,
+        PendudukDudaJandaSerializer,
+        "Surat Keterangan Duda / Janda",
+    ),
+    "kehilangan": (
+        AdminKehilanganSerializer,
+        PendudukKehilanganSerializer,
+        "Surat Kehilangan",
+    ),
+    "izinkeramaian": (
+        AdminIzinKeramaianSerializer,
+        PendudukIzinKeramaianSerializer,
+        "Surat Izin Keramaian",
+    ),
+    "izinpesta": (
+        AdminIzinPestaSerializer,
+        PendudukIzinPestaSerializer,
+        "Surat Izin Pesta",
+    ),
     "kematian": (
         AdminSuratKematianSerializer,
         PendudukSuratKematianSerializer,

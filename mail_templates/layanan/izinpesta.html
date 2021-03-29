@@ -4,7 +4,7 @@
 			<div>
 				<br>
 				<center>
-					<h3><u>SURAT KETERANGAN</u></h3>
+					<h3><u>SURAT KETERANGAN IZIN PESTA</u></h3>
 					<p>{{surat.no_surat}}
 				</center>
 
@@ -27,7 +27,7 @@
 					</tr>
 					<tr>
 						<td colspan=3>
-							Menerangkan Kepada:
+							Menerangkan kepada:
 						</td>
 					</tr>
 					<tr class="data-row">
@@ -50,12 +50,57 @@
 						<td>:</td>
 						<td>{{surat.penduduk.alamat}}</td>
 					</tr>
+					<tr>
+						<td colspan=3>
+				Untuk melaksanakan acara Pesta 
+				{% for item in surat.atribut.jenis_pesta %}
+				{% if loop.index >1 %}
+				,
+				{% endif %}
+				{{item.title()}}
+				{% endfor %}
+				dengan ketentuan waktu dan tempat sebagai berikut
+						</td>
+					</tr>
+					{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
+					{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
+					{% set tanggal = surat.serialized_atribut['tanggal_pesta']%}
+					<tr class="data-row">
+						<td>Hari / Tanggal</td>
+						<td>:</td>
+						<td>{{nama_hari[tanggal.weekday()].title()}}, {{tanggal.day}} {{nama_bulan[tanggal.month].title()}} {{tanggal.year}}</td>
+					</tr>
+					<tr class="data-row">
+						<td>Waktu</td>
+						<td>:</td>
+						<td>{{surat.atribut.waktu_mulai}} - Selesai</td>
+					</tr>
+					<tr class="data-row">
+						<td>Tempat</td>
+						<td>:</td>
+						<td>{{surat.atribut.tempat}}</td>
+					</tr>
 				</table>
-				{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
-				{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
-				{% set tanggal_acara = surat.serialized_atribut['tanggal']%}
-				<p> Bahwa yang bersangkutan diatas adalah  Benar-benar Ahli Waris / Anak  Dari Almarhum {{surat.atribut['nama_jenazah']}} dan Benar – benar Telah Menyelenggarakan Penguburan Almarhum {{surat.atribut['nama_jenazah']}} Pada Hari {{nama_hari[tanggal_acara.weekday()].title()}} {{tanggal_acara.day}} {{nama_bulan[tanggal_acara.month].title()}} {{tanggal_acara.year}}</p>
-				<p>Demikian surat keterangan ini dibuat dengan sebenarnya dan untuk dipergunakan sebagaimana semestinya.</p>
+
+				<table id="bordered">
+					<thead>
+						<tr>
+							<th width="40px">No.</th>
+							<th>Pesta</th>
+							<th width="70px">Jumlah</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in surat.atribut['jenis_pesta'] %}
+						<tr>
+							<td>{{loop.index}}</td>
+							<td>{{item}}</td>
+							<td>1</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+
 
 				<table style="margin-top:40px;width:100%;">
 					<tr>
@@ -71,10 +116,7 @@
 					</tr>
 					<tr>
 						<td style="text-align:center;">
-							Pemohon
-							<p style="margin-top:80px;">
-							<b><u>{{surat.penduduk.nama}}</u></b>
-							</p>
+							&nbsp;
 						</td>
 						<td style="width:40%">
 							&nbsp;
