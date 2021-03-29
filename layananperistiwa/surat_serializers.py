@@ -157,25 +157,31 @@ class PendudukRapidTestSerializer(BasePendudukSuratSerializer):
 
 
 class AdminKetPendudukSerializer(BaseAdminSuratSerializer):
+    atribut = serializers.DictField(required=False)
+
     class Meta(BaseAdminSuratSerializer.Meta):
         jenis_surat = "rapidtest"
 
 
 class PendudukKetPendudukSerializer(BasePendudukSuratSerializer):
+    atribut = serializers.DictField(required=False)
+
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "rapidtest"
 
 
 class AdminTempatTinggalSerializer(BaseAdminSuratSerializer):
+    atribut = serializers.DictField(required=False)
+
     class Meta(BaseAdminSuratSerializer.Meta):
         jenis_surat = "ktt"
-        exclude = BaseAdminSuratSerializer.Meta.exclude + ["atribut"]
 
 
 class PendudukTempatTinggalSerializer(BasePendudukSuratSerializer):
+    atribut = serializers.DictField(required=False)
+
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "ktt"
-        exclude = BaseAdminSuratSerializer.Meta.exclude + ["atribut"]
 
 
 class AtributLuarDaerah(serializers.Serializer):
@@ -237,7 +243,7 @@ class PendudukBelumMenikahSerializer(BasePendudukSuratSerializer):
 
 class AtributSuratPenguburan(serializers.Serializer):
     nama_jenazah = serializers.CharField()
-    tanggal_penguburan = serializers.DateField()
+    tanggal_penguburan = serializers.CharField()
     tanggal = serializers.SerializerMethodField()
 
     def get_tanggal(self, obj):
