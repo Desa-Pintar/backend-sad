@@ -27,11 +27,6 @@
 				{{surat.penduduk.tgl_lahir}}</td>
 		</tr>
 		<tr class="data-row">
-			<td>Jenis Kelamin</td>
-			<td>:</td>
-			<td>{{surat.penduduk.jk}}</td>
-		</tr>
-		<tr class="data-row">
 			<td>Pekerjaan</td>
 			<td>:</td>
 			<td>{{surat.penduduk.pekerjaan}}</td>
@@ -43,7 +38,13 @@
 		</tr>
 	</table>
 	<p>
-	Bahwa yang bersangkutan diatas benar-benar Penduduk  Desa {{desa.nama_desa.title()}}, Kec. {{desa.kecamatan.nama_kecamatan.title()}}, {{desa.kecamatan.kab_kota.nama_kab_kota.title()}} dan Benar-benar sedang melakukan {{surat.atribut['jenis_perjalanan']}} di luar daerah ( {{surat.atribut['nama_daerah']}})  dalam rangka melakukan {{surat.atribut['jenis_rangka_perjalanan']}}.
+	Bahwa yang bersangkutan diatas adalah benar-benar penduduk Desa {{desa.nama_desa.title()}} dan benar-benar  telah Pisah Ranjang dengan 
+	{% if surat.penduduk.jk == 'Perempuan' %}
+	Suami
+	{% else %}
+	Istri
+	{% endif %}
+	An.	{{surat.atribut['nama_mantan_pasangan']}} sejak tahun {{surat.atribut['tahun_berpisah']}} sampai dengan saat ini.
 	</p>
 	<p>
 	Demikianlah surat keterangan ini dibuat untuk dipergunakan sebagaimana semestinya.
