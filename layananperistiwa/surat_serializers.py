@@ -7,10 +7,13 @@ from dynamic_rest.fields import DynamicRelationField
 from api_sad_sig.util import (
     CustomSerializer,
 )
-from v1.models import SadPenduduk
-from v1.serializers import SadPendudukMiniSerializer
-from .models import LayananSurat, SadKematian
-from .serializers import SadKematianSuratSerializer
+from v1.models import SadPenduduk, SadSubDesa
+from v1.serializers import (
+    SadPendudukMiniSerializer,
+    SadSubDesaGeneralSerializer,
+)
+from .models import LayananSurat, SadKematian, SadKelahiran
+from .serializers import SadKematianSuratSerializer, SadKelahiranSerializer
 
 
 class ListSuratSerializer(CustomSerializer):
@@ -309,6 +312,11 @@ class PendudukPernyataanKebenaranSerializer(BasePendudukSuratSerializer):
 
 class AtributKelahiran(serializers.Serializer):
     kelahiran_id = serializers.IntegerField()
+    kelahiran = serializers.SerializerMethodField()
+
+    def get_kelahiran(self, obj):
+        inst = SadKelahiran.objects.get(pk=obj["kelahiran_id"])
+        return SadKelahiranSerializer(inst).data
 
 
 class AdminSuratKelahiranSerializer(BaseAdminSuratSerializer):
@@ -460,7 +468,105 @@ class PendudukKetPisahSerializer(BasePendudukSuratSerializer):
         jenis_surat = "ket_pisah"
 
 
+class DaftarKayu(serializers.Serializer):
+    jenis = serializers.CharField()
+    panjang = serializers.FloatField(required=False)
+    lebar = serializers.FloatField(required=False)
+    tebal = serializers.FloatField(required=False)
+    jumlah = serializers.IntegerField()
+    volume = serializers.SerializerMethodField()
+
+    def get_volume(self, obj):
+        if (
+            obj.get("panjang", None)
+            and obj.get("lebar", None)
+            and obj.get("tebal", None)
+        ):
+            return obj["panjang"] * obj["lebar"] * obj["tebal"]
+        return None
+
+
+class AtributAsalUsulKayu(serializers.Serializer):
+    nama = serializers.CharField()
+    umur = serializers.IntegerField()
+    pekerjaan = serializers.CharField()
+    alamat = serializers.CharField()
+    kota_tujuan = serializers.CharField()
+    daftar_kayu = DaftarKayu(many=True)
+    total_jumlah_kayu = serializers.SerializerMethodField()
+
+    def get_total_jumlah_kayu(self, obj):
+        total = 0
+        for item in obj["daftar_kayu"]:
+            total += item["jumlah"]
+        return int(total)
+
+
+class AdminSKAUSerializer(BaseAdminSuratSerializer):
+    atribut = AtributAsalUsulKayu()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "skau"
+
+
+class PendudukSKAUSerializer(BasePendudukSuratSerializer):
+    atribut = AtributAsalUsulKayu()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "skau"
+
+
+class AtributHakMilikTanah(serializers.Serializer):
+    luas_tanah_angka = serializers.IntegerField()
+    luas_tanah_kalimat = serializers.CharField()
+    subdesa_id = serializers.IntegerField()
+    batas_utara = serializers.CharField()
+    batas_selatan = serializers.CharField()
+    batas_timur = serializers.CharField()
+    batas_barat = serializers.CharField()
+    nama_saksi1 = serializers.CharField()
+    nama_saksi2 = serializers.CharField()
+    nama_saksi3 = serializers.CharField()
+    subdesa = serializers.SerializerMethodField()
+
+    def get_subdesa(self, obj):
+        if not obj.get("subdesa_id", None):
+            return {}
+        inst = SadSubDesa.objects.get(pk=obj["subdesa_id"])
+        return SadSubDesaGeneralSerializer(inst).data
+
+
+class AdminHakMilikTanahSerializer(BaseAdminSuratSerializer):
+    atribut = AtributHakMilikTanah()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "shm"
+
+
+class PendudukHakMilikTanahSerializer(BasePendudukSuratSerializer):
+    atribut = AtributHakMilikTanah()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "shm"
+
+
 serializer_list = {
+    "shm": (
+        AdminHakMilikTanahSerializer,
+        PendudukHakMilikTanahSerializer,
+        "Surat Keterangan Hak Milik",
+    ),
+    "skau": (
+        AdminSKAUSerializer,
+        PendudukSKAUSerializer,
+        "Surat Keterangan Asal Usul Kayu",
+    ),
+    "kelahiran": (
+        AdminSuratKelahiranSerializer,
+        PendudukSuratKelahiranSerializer,
+        "Surat Keterangan Kelahiran",
+    ),
+
     "ket_pisah": (
         AdminKetPisahSerializer,
         PendudukKetPisahSerializer,
