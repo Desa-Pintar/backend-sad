@@ -7,11 +7,8 @@ from dynamic_rest.fields import DynamicRelationField
 from api_sad_sig.util import (
     CustomSerializer,
 )
-from v1.models import SadPenduduk, SadSubDesa
-from v1.serializers import (
-    SadPendudukMiniSerializer,
-    SadSubDesaGeneralSerializer,
-)
+from v1.models import SadPenduduk, SadDusun
+from v1.serializers import SadPendudukMiniSerializer, SadDusunSerializer
 from .models import LayananSurat, SadKematian, SadKelahiran
 from .serializers import SadKematianSuratSerializer, SadKelahiranSerializer
 
@@ -519,7 +516,7 @@ class PendudukSKAUSerializer(BasePendudukSuratSerializer):
 class AtributHakMilikTanah(serializers.Serializer):
     luas_tanah_angka = serializers.IntegerField()
     luas_tanah_kalimat = serializers.CharField()
-    subdesa_id = serializers.IntegerField()
+    dusun_id = serializers.IntegerField()
     batas_utara = serializers.CharField()
     batas_selatan = serializers.CharField()
     batas_timur = serializers.CharField()
@@ -527,13 +524,13 @@ class AtributHakMilikTanah(serializers.Serializer):
     nama_saksi1 = serializers.CharField()
     nama_saksi2 = serializers.CharField()
     nama_saksi3 = serializers.CharField()
-    subdesa = serializers.SerializerMethodField()
+    dusun = serializers.SerializerMethodField()
 
-    def get_subdesa(self, obj):
-        if not obj.get("subdesa_id", None):
+    def get_dusun(self, obj):
+        if not obj.get("dusun_id", None):
             return {}
-        inst = SadSubDesa.objects.get(pk=obj["subdesa_id"])
-        return SadSubDesaGeneralSerializer(inst).data
+        inst = SadDusun.objects.get(pk=obj["dusun_id"])
+        return SadDusunSerializer(inst).data
 
 
 class AdminHakMilikTanahSerializer(BaseAdminSuratSerializer):
