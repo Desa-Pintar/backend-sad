@@ -519,13 +519,11 @@ class KategoriArtikelSerializer(DynamicModelSerializer):
         name = "data"
         exclude = []
 
-
 class KategoriInformasiSerializer(DynamicModelSerializer):
     class Meta:
         model = KategoriInformasi
         name = "data"
         exclude = []
-
 
 class KategoriPotensiSerializer(DynamicModelSerializer):
     class Meta:
@@ -533,20 +531,17 @@ class KategoriPotensiSerializer(DynamicModelSerializer):
         name = "data"
         exclude = []
 
-
 class KategoriLaporSerializer(DynamicModelSerializer):
     class Meta:
         model = KategoriLapor
         name = "data"
         exclude = []
 
-
 class StatusLaporSerializer(DynamicModelSerializer):
     class Meta:
         model = StatusLapor
         name = "data"
         exclude = []
-
 
 class LaporSerializer(CustomSerializer):
     kategori = DynamicRelationField(
