@@ -7,15 +7,30 @@ from dynamic_rest.fields import DynamicRelationField
 from api_sad_sig.util import (
     CustomSerializer,
 )
-from v1.models import SadPenduduk, SadDusun
+from v1.models import SadPenduduk, SadDusun, Pegawai
 from v1.serializers import SadPendudukMiniSerializer, SadDusunSerializer
 from .models import LayananSurat, SadKematian, SadKelahiran
 from .serializers import SadKematianSuratSerializer, SadKelahiranSerializer
 
 
+class PendudukListSurat(CustomSerializer):
+    class Meta:
+        model = SadPenduduk
+        fields = ["id", "nik", "nama"]
+
+
+class PegawaiListSurat(CustomSerializer):
+    class Meta:
+        model = Pegawai
+        fields = ["id", "nip", "nama", "jabatan"]
+
+
 class ListSuratSerializer(CustomSerializer):
     pemohon = DynamicRelationField(
-        "v1.serializers.SadPendudukMiniSerializer", source="penduduk"
+        "PendudukListSurat", source="penduduk", deferred=False, embed=True
+    )
+    pegawai = DynamicRelationField(
+        "PegawaiListSurat", deferred=False, embed=True
     )
 
     class Meta:
@@ -35,7 +50,10 @@ class ListSuratSerializer(CustomSerializer):
 
 class BaseAdminSuratSerializer(CustomSerializer):
     pemohon = DynamicRelationField(
-        "v1.serializers.SadPendudukMiniSerializer", source="penduduk"
+        "PendudukListSurat", source="penduduk", deferred=False, embed=True
+    )
+    pegawai = DynamicRelationField(
+        "PegawaiListSurat", deferred=False, embed=True
     )
 
     def create(self, data):
@@ -563,7 +581,6 @@ serializer_list = {
         PendudukSuratKelahiranSerializer,
         "Surat Keterangan Kelahiran",
     ),
-
     "ket_pisah": (
         AdminKetPisahSerializer,
         PendudukKetPisahSerializer,
