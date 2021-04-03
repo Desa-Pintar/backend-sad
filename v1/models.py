@@ -789,6 +789,14 @@ class SigUmkm(CustomModel):
 
         db_table = "sig_umkm"
 
+class SigRawanBencana(CustomModel):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+    geometry = JSONField(blank=True, null=True)
+
+    class Meta(CustomModel.Meta):
+
+        db_table = "sig_rawan_bencana"
+
 class SigSadDesa(CustomModel):
     sad_desa = models.ForeignKey(
         SadDesa, models.DO_NOTHING, blank=True, null=True

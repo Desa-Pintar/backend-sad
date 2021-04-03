@@ -815,6 +815,30 @@ class SigUmkmViewSet(CustomView):
 
         return Response()
 
+class SigRawanBencanaViewSet(CustomView):
+    queryset = SigRawanBencana.objects.all().order_by("id")
+    serializer_class = SigRawanBencanaSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @action(detail=False, methods=["get"])
+    def delete_all(self, request):
+        SigRawanBencana.objects.all().delete()
+        return Response()
+
+    @action(detail=False, methods=["post"])
+    def upload(self, request):
+        file = request.FILES["file"]
+        data = json.load(file)
+
+        for item in data["features"]:
+            item = {
+                "nama": item["properties"]["Layer"],
+                "geometry": item["geometry"],
+            }
+            SigRawanBencana.objects.create(**item)
+
+        return Response()
+
 class SigDusunViewSet(CustomView):
     queryset = SigDusun.objects.all().order_by("id")
     serializer_class = SigDusunSerializer
