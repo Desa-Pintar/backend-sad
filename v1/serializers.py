@@ -213,17 +213,22 @@ class SadKeluargaSerializer(CustomSerializer):
 
 
 class SadPendudukMiniSerializer(CustomSerializer):
+    alamat_lengkap = serializers.CharField(
+        source="keluarga.alamat.alamat_lengkap", read_only=True
+    )
+
     class Meta:
         model = SadPenduduk
         name = "data"
         fields = [
+            "alamat_lengkap",
+            "alamat",
             "id",
             "age",
             "nama",
             "nik",
             "tgl_lahir",
             "tempat_lahir",
-            "alamat",
             "pendidikan",
             "pekerjaan",
             "status_kawin",
