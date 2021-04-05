@@ -178,14 +178,14 @@ class AdminKetPendudukSerializer(BaseAdminSuratSerializer):
     atribut = serializers.DictField(required=False)
 
     class Meta(BaseAdminSuratSerializer.Meta):
-        jenis_surat = "rapidtest"
+        jenis_surat = "ket_penduduk"
 
 
 class PendudukKetPendudukSerializer(BasePendudukSuratSerializer):
     atribut = serializers.DictField(required=False)
 
     class Meta(BasePendudukSuratSerializer.Meta):
-        jenis_surat = "rapidtest"
+        jenis_surat = "ket_penduduk"
 
 
 class AdminTempatTinggalSerializer(BaseAdminSuratSerializer):
@@ -565,7 +565,63 @@ class PendudukHakMilikTanahSerializer(BasePendudukSuratSerializer):
         jenis_surat = "shm"
 
 
+class PendudukMiniSuratSerializer(serializers.Serializer):
+    nama = serializers.CharField()
+    pekerjaan = serializers.CharField()
+    umur = serializers.IntegerField()
+    alamat = serializers.CharField()
+
+
+class PasanganMeninggal(serializers.Serializer):
+    nama = serializers.CharField()
+    pekerjaan = serializers.CharField(required=False)
+    umur = serializers.IntegerField(required=False)
+    alamat = serializers.CharField(required=False)
+    tanggal_meninggal = serializers.CharField(required=False)
+
+
+class AtributAhliWaris(serializers.Serializer):
+    almarhum_id = serializers.IntegerField()
+    pasangan = PasanganMeninggal()
+    ahli_waris = PendudukMiniSuratSerializer(many=True)
+    saksi = PendudukMiniSuratSerializer(many=True)
+
+    almarhum = serializers.SerializerMethodField()
+    kematian = serializers.SerializerMethodField()
+    jumlah_ahliwaris = serializers.SerializerMethodField()
+
+    def get_kematian(self, obj):
+        kematian = SadKematian.objects.get(penduduk_id=obj["almarhum_id"])
+        return SadKematianSuratSerializer(kematian).data
+
+    def get_almarhum(self, obj):
+        penduduk = SadPenduduk.all_objects.get(pk=obj["almarhum_id"])
+        return SadPendudukMiniSerializer(penduduk).data
+
+    def get_jumlah_ahliwaris(self, obj):
+        return len(obj["ahli_waris"])
+
+
+class AdminAhliWarisSerializer(BaseAdminSuratSerializer):
+    atribut = AtributAhliWaris()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "skaw"
+
+
+class PendudukAhliWarisSerializer(BasePendudukSuratSerializer):
+    atribut = AtributAhliWaris()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "skaw"
+
+
 serializer_list = {
+    "skaw": (
+        AdminAhliWarisSerializer,
+        PendudukAhliWarisSerializer,
+        "Surat Keterangan Ahli Waris",
+    ),
     "shm": (
         AdminHakMilikTanahSerializer,
         PendudukHakMilikTanahSerializer,

@@ -48,7 +48,7 @@
 					<tr class="data-row">
 						<td>Alamat</td>
 						<td>:</td>
-						<td>{{surat.penduduk.alamat}}</td>
+						<td>{{surat.penduduk.keluarga.alamat_lengkap}}</td>
 					</tr>
 					<tr>
 						<td colspan=3>
@@ -62,13 +62,11 @@
 				dengan ketentuan waktu dan tempat sebagai berikut
 						</td>
 					</tr>
-					{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
-					{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
-					{% set tanggal = surat.serialized_atribut['tanggal_pesta']%}
+					{% set tanggal_surat = datetime.strptime(surat.serialized_atribut['tanggal_pesta'], '%Y-%m-%d')%}
 					<tr class="data-row">
 						<td>Hari / Tanggal</td>
 						<td>:</td>
-						<td>{{nama_hari[tanggal.weekday()].title()}}, {{tanggal.day}} {{nama_bulan[tanggal.month].title()}} {{tanggal.year}}</td>
+						<td>{{tanggal_surat.strftime('%A, %m %B %Y')}}
 					</tr>
 					<tr class="data-row">
 						<td>Waktu</td>

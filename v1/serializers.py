@@ -408,6 +408,7 @@ class SigRawanBencanaSerializer(CustomSerializer):
         name = "data"
         exclude = []
 
+
 class SigPemilikSerializer(CustomSerializer):
     pemilik = DynamicRelationField(
         "SadPendudukSerializer", deferred=True, embed=True
