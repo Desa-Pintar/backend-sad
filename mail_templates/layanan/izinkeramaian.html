@@ -81,14 +81,11 @@
 					<tr class="data-row">
 						<td>Alamat</td>
 						<td>:</td>
-						<td>{{surat.penduduk.alamat}}</td>
+						<td>{{surat.penduduk.keluarga.alamat_lengkap}}</td>
 					</tr>
 			</table>
 			<br>
-
-			{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
-			{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
-			{% set tanggal_acara = surat.serialized_atribut['tanggal_pesta']%}
+			{% set tanggal_acara = datetime.strptime(surat.serialized_atribut['tanggal_pesta'], '%Y-%m-%d')%}
 			<p>
 			Untuk Pelaksanaan Acara {{surat.atribut.jenis_pesta}}, maka kami mohon bantuan Bapak Kapolsek Kwandang dapat memberikan izin keramaian acara dimaksud dengan ketentuan waktu dan tempat sebagai berikut :
 			</p>
@@ -96,7 +93,7 @@
 				<tr>
 					<td width="100px">Hari/Tgl</td>
 					<td width="5px">:</td>
-					<td>{{nama_hari[tanggal_acara.weekday()].title()}}, {{tanggal_acara.day}} {{nama_bulan[tanggal_acara.month].title()}} {{tanggal_acara.year}}</td>
+					<td>{{tanggal_acara.strftime('%A, %d %B %Y')}}</td>
 				</tr>
 				<tr>
 					<td>Waktu</td>

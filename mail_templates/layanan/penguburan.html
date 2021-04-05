@@ -48,13 +48,11 @@
 					<tr class="data-row">
 						<td>Alamat</td>
 						<td>:</td>
-						<td>{{surat.penduduk.alamat}}</td>
+						<td>{{surat.penduduk.alamat_lengkap}}</td>
 					</tr>
 				</table>
-				{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
-				{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
-				{% set tanggal_acara = surat.serialized_atribut['tanggal']%}
-				<p> Bahwa yang bersangkutan diatas adalah  Benar-benar Ahli Waris / Anak  Dari Almarhum {{surat.atribut['nama_jenazah']}} dan Benar – benar Telah Menyelenggarakan Penguburan Almarhum {{surat.atribut['nama_jenazah']}} Pada Hari {{nama_hari[tanggal_acara.weekday()].title()}} {{tanggal_acara.day}} {{nama_bulan[tanggal_acara.month].title()}} {{tanggal_acara.year}}</p>
+				{% set tanggal_acara = datetime.strptime(surat.serialized_atribut['tanggal'], '%Y-%m-%d') %}
+				<p> Bahwa yang bersangkutan diatas adalah  Benar-benar Ahli Waris / Anak  Dari Almarhum {{surat.atribut['nama_jenazah']}} dan Benar – benar Telah Menyelenggarakan Penguburan Almarhum {{surat.atribut['nama_jenazah']}} Pada Hari {{tanggal_acara.strftime('%A, %d %B %Y')}}</p>
 				<p>Demikian surat keterangan ini dibuat dengan sebenarnya dan untuk dipergunakan sebagaimana semestinya.</p>
 
 				<table style="margin-top:40px;width:100%;">

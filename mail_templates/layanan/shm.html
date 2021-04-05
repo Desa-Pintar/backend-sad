@@ -33,7 +33,7 @@
 		<tr class="data-row">
 			<td>Alamat</td>
 			<td>:</td>
-			<td>{{surat.penduduk.alamat}}</td>
+			<td>{{surat.penduduk.keluarga.alamat_lengkap}}</td>
 		</tr>
 	</table>
 	<p>
@@ -62,9 +62,9 @@
 			<td>{{desa.nama_desa.title()}}</td>
 		</tr>
 		<tr class="data-row">
-			<td>Dusun</td>
+			<td>{{surat.serialized_atribut['subdesa']['jenis'].title()}}</td>
 			<td>:</td>
-			<td>{{surat.serialized_atribut['dusun']['nama'].title()}}</td>
+			<td>{{surat.serialized_atribut['subdesa']['nama'].title()}}</td>
 		</tr>
 	</table>
 	<p>Dengan batas-batas sebagai berikut:</p>

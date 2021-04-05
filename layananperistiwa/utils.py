@@ -1,5 +1,6 @@
 import jinja2
 import pdfkit
+from datetime import datetime
 
 from django.conf import settings
 from django.utils import timezone
@@ -21,6 +22,7 @@ def render_new_mail(mail_type, data):
         surat=data,
         logo=logo_path,
         tanggal=timezone.now().strftime("%d %B %Y"),
+        datetime=datetime,
     )
 
     options = {"page-size": "A4"}
