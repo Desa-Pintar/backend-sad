@@ -177,7 +177,7 @@ class Alamat(CustomModel):
             return f"""RT {self.rt.rt} RT {self.rw.rw},
         Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"""
         elif self.dusun:
-            return f"{self.jalan_blok, Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"
+            return f"{self.jalan_blok}, Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"
         return None
 
     def alamat_id(self):
@@ -756,6 +756,7 @@ class SigArahan(CustomModel):
 
         db_table = "sig_arahan"
 
+
 class SigTopomini(CustomModel):
     nama = models.CharField(max_length=100, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
@@ -773,6 +774,7 @@ class SigRumahBantuan(CustomModel):
 
         db_table = "sig_rumahbantuan"
 
+
 class SigRumahSehat(CustomModel):
     nama = models.CharField(max_length=100, blank=True, null=True)
     geometry = JSONField(blank=True, null=True)
@@ -780,6 +782,7 @@ class SigRumahSehat(CustomModel):
     class Meta(CustomModel.Meta):
 
         db_table = "sig_rumahsehat"
+
 
 class SigUmkm(CustomModel):
     nama = models.CharField(max_length=100, blank=True, null=True)
