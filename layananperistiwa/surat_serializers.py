@@ -178,14 +178,14 @@ class AdminKetPendudukSerializer(BaseAdminSuratSerializer):
     atribut = serializers.DictField(required=False)
 
     class Meta(BaseAdminSuratSerializer.Meta):
-        jenis_surat = "rapidtest"
+        jenis_surat = "ket_penduduk"
 
 
 class PendudukKetPendudukSerializer(BasePendudukSuratSerializer):
     atribut = serializers.DictField(required=False)
 
     class Meta(BasePendudukSuratSerializer.Meta):
-        jenis_surat = "rapidtest"
+        jenis_surat = "ket_penduduk"
 
 
 class AdminTempatTinggalSerializer(BaseAdminSuratSerializer):
