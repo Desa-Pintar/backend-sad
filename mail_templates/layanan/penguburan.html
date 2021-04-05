@@ -51,7 +51,7 @@
 						<td>{{surat.penduduk.alamat_lengkap}}</td>
 					</tr>
 				</table>
-				{% set tanggal_acara = datetime.strptime(surat.serialized_atribut['tanggal'], '%Y-%m-%d') %}
+				{% set tanggal_acara = surat.serialized_atribut['tanggal']  %}
 				<p> Bahwa yang bersangkutan diatas adalah  Benar-benar Ahli Waris / Anak  Dari Almarhum {{surat.atribut['nama_jenazah']}} dan Benar – benar Telah Menyelenggarakan Penguburan Almarhum {{surat.atribut['nama_jenazah']}} Pada Hari {{tanggal_acara.strftime('%A, %d %B %Y')}}</p>
 				<p>Demikian surat keterangan ini dibuat dengan sebenarnya dan untuk dipergunakan sebagaimana semestinya.</p>
 
