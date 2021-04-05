@@ -177,7 +177,7 @@ class Alamat(CustomModel):
             return f"""RT {self.rt.rt} RT {self.rw.rw},
         Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"""
         elif self.dusun:
-            return f"Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"
+            return f"{self.jalan_blok, Dusun {self.dusun.nama}, Desa {self.desa.nama_desa}"
         return None
 
     def alamat_id(self):
