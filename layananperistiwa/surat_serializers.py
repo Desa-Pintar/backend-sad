@@ -101,6 +101,40 @@ class BasePendudukSuratSerializer(CustomSerializer):
         ]
 
 
+class AtributHakMilikTanah(serializers.Serializer):
+    luas_tanah_angka = serializers.IntegerField()
+    luas_tanah_kalimat = serializers.CharField()
+    dusun_id = serializers.IntegerField()
+    batas_utara = serializers.CharField()
+    batas_selatan = serializers.CharField()
+    batas_timur = serializers.CharField()
+    batas_barat = serializers.CharField()
+    nama_saksi1 = serializers.CharField()
+    nama_saksi2 = serializers.CharField()
+    nama_saksi3 = serializers.CharField()
+    dusun = serializers.SerializerMethodField()
+
+    def get_dusun(self, obj):
+        if not obj.get("dusun_id", None):
+            return {}
+        inst = SadDusun.objects.get(pk=obj["dusun_id"])
+        return SadDusunSerializer(inst).data
+
+
+class AdminHakMilikTanahSerializer(BaseAdminSuratSerializer):
+    atribut = AtributHakMilikTanah()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "shm"
+
+
+class PendudukHakMilikTanahSerializer(BasePendudukSuratSerializer):
+    atribut = AtributHakMilikTanah()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "shm"
+
+
 class AtributSKCK(serializers.Serializer):
     keperluan = serializers.CharField(required=False)
     keterangan = serializers.CharField(required=False)
@@ -531,40 +565,6 @@ class PendudukSKAUSerializer(BasePendudukSuratSerializer):
         jenis_surat = "skau"
 
 
-class AtributHakMilikTanah(serializers.Serializer):
-    luas_tanah_angka = serializers.IntegerField()
-    luas_tanah_kalimat = serializers.CharField()
-    dusun_id = serializers.IntegerField()
-    batas_utara = serializers.CharField()
-    batas_selatan = serializers.CharField()
-    batas_timur = serializers.CharField()
-    batas_barat = serializers.CharField()
-    nama_saksi1 = serializers.CharField()
-    nama_saksi2 = serializers.CharField()
-    nama_saksi3 = serializers.CharField()
-    dusun = serializers.SerializerMethodField()
-
-    def get_dusun(self, obj):
-        if not obj.get("dusun_id", None):
-            return {}
-        inst = SadDusun.objects.get(pk=obj["dusun_id"])
-        return SadDusunSerializer(inst).data
-
-
-class AdminHakMilikTanahSerializer(BaseAdminSuratSerializer):
-    atribut = AtributHakMilikTanah()
-
-    class Meta(BaseAdminSuratSerializer.Meta):
-        jenis_surat = "shm"
-
-
-class PendudukHakMilikTanahSerializer(BasePendudukSuratSerializer):
-    atribut = AtributHakMilikTanah()
-
-    class Meta(BasePendudukSuratSerializer.Meta):
-        jenis_surat = "shm"
-
-
 class PendudukMiniSuratSerializer(serializers.Serializer):
     nama = serializers.CharField()
     pekerjaan = serializers.CharField()
@@ -616,7 +616,110 @@ class PendudukAhliWarisSerializer(BasePendudukSuratSerializer):
         jenis_surat = "skaw"
 
 
+class AtributDokumenBedaNama(serializers.Serializer):
+    nama_dokumen = serializers.CharField()
+    nama_orang = serializers.CharField()
+
+
+class AtributBedaNama(serializers.Serializer):
+    dokumen_salah = AtributDokumenBedaNama()
+    dokumen_benar = AtributDokumenBedaNama(required=False)
+    penyebab = serializers.CharField(required=False)
+
+
+class AdminBedaNamaSerializer(BaseAdminSuratSerializer):
+    atribut = AtributBedaNama()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "bedanama"
+
+
+class PendudukBedaNamaSerializer(BasePendudukSuratSerializer):
+    atribut = AtributBedaNama()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "bedanama"
+
+
+class AtributPerekaman(serializers.Serializer):
+    nama_subject = serializers.CharField()
+    keterangan = serializers.CharField()
+
+
+class AdminPerekamanSerializer(BaseAdminSuratSerializer):
+    atribut = AtributPerekaman()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "perekaman"
+
+
+class PendudukPerekamanSerializer(BasePendudukSuratSerializer):
+    atribut = AtributPerekaman()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "perekaman"
+
+
+jenis_listriks = ["prabayar", "pascabayar"]
+
+
+class AtributBalikNamaTokenListrik(serializers.Serializer):
+    jenis_listrik = serializers.ChoiceField(jenis_listriks)
+    nama_awal = serializers.CharField()
+    id_pelanggan = serializers.CharField()
+    daya_listrik = serializers.IntegerField()
+    nama_cabang = serializers.CharField()
+
+
+class AdminBalikNamaTokenListrik(BaseAdminSuratSerializer):
+    atribut = AtributBalikNamaTokenListrik()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "bntl"
+
+
+class PendudukBalikNamaTokenListrik(BasePendudukSuratSerializer):
+    atribut = AtributBalikNamaTokenListrik()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "bntl"
+
+
+class AdminSKTMKeluargaSerializer(BaseAdminSuratSerializer):
+    atribut = serializers.DictField(required=False)
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "sktm_keluarga"
+
+
+class PendudukSKTMKeluargaSerializer(BasePendudukSuratSerializer):
+    atribut = serializers.DictField(required=False)
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "sktm_keluarga"
+
+
 serializer_list = {
+    "sktm_keluarga": (
+        AdminSKTMKeluargaSerializer,
+        PendudukSKTMKeluargaSerializer,
+        "SKTM - Keluarga",
+    ),
+    "bntl": (
+        AdminBalikNamaTokenListrik,
+        PendudukBalikNamaTokenListrik,
+        "Surat Pengantar Balik Nama Token Listrik",
+    ),
+    "perekaman": (
+        AdminPerekamanSerializer,
+        PendudukPerekamanSerializer,
+        "Surat Keterangan Perekaman",
+    ),
+    "bedanama": (
+        AdminBedaNamaSerializer,
+        PendudukBedaNamaSerializer,
+        "Orang Yang Sama (Perbedaan Nama)",
+    ),
     "skaw": (
         AdminAhliWarisSerializer,
         PendudukAhliWarisSerializer,
