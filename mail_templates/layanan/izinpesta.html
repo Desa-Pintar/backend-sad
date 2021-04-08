@@ -62,7 +62,7 @@
 				dengan ketentuan waktu dan tempat sebagai berikut
 						</td>
 					</tr>
-					{% set tanggal_surat = datetime.strptime(surat.serialized_atribut['tanggal_pesta'], '%Y-%m-%d')%}
+					{% set tanggal_surat = surat.serialized_atribut['tanggal_pesta'] %}
 					<tr class="data-row">
 						<td>Hari / Tanggal</td>
 						<td>:</td>

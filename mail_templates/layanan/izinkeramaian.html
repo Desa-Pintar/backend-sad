@@ -85,7 +85,7 @@
 					</tr>
 			</table>
 			<br>
-			{% set tanggal_acara = datetime.strptime(surat.serialized_atribut['tanggal_pesta'], '%Y-%m-%d')%}
+			{% set tanggal_acara = surat.serialized_atribut['tanggal_pesta'] %}
 			<p>
 			Untuk Pelaksanaan Acara {{surat.atribut.jenis_pesta}}, maka kami mohon bantuan Bapak Kapolsek Kwandang dapat memberikan izin keramaian acara dimaksud dengan ketentuan waktu dan tempat sebagai berikut :
 			</p>
