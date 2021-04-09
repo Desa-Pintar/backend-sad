@@ -4,7 +4,7 @@
 			<div>
 				<br>
 				<center>
-					<h3><u>SURAT KETERANGAN IZIN PESTA</u></h3>
+					<h3><u>SURAT KETERANGAN</u></h3>
 					<p>{{surat.no_surat}}
 				</center>
 
@@ -25,9 +25,17 @@
 						<td style="width:10px;">:</td>
 						<td>{{surat.pegawai.jabatan}}</td>
 					</tr>
+					<tr class="data-row">
+						<td style="width:400px;">Alamat</td>
+						<td style="width:10px;">:</td>
+						<td>
+							Desa {{desa.nama_desa.title()}} &nbsp;
+							Kec. {{desa.kecamatan.nama_kecamatan.title()}}
+						</td>
+					</tr>
 					<tr>
 						<td colspan=3>
-							Menerangkan kepada:
+							Dengan ini menerangkan kepada:
 						</td>
 					</tr>
 					<tr class="data-row">
@@ -50,55 +58,20 @@
 						<td>:</td>
 						<td>{{surat.penduduk.keluarga.alamat_lengkap}}</td>
 					</tr>
-					<tr>
-						<td colspan=3>
-				Untuk melaksanakan acara Pesta 
-				{% for item in surat.atribut.jenis_pesta %}
-				{% if loop.index >1 %}
-				,
+				</table>
+				<p class="justify">
+				Bahwa yang bersangkutan diatas benar-benar Penduduk Desa {{desa.nama_desa.title()}} Kec.{{desa.kecamatan.nama_kecamatan.title()}} {{desa.kecamatan.kab_kota.nama_kab_kota.title()}}  
+				dan benar-benar akan membalik  nama
+				{% if surat.atribut['jenis_listrik'] == 'prabayar' %}
+				Token Listrik Prabayar
+				{% else %}
+				Rekening Listrik Pascabayar
 				{% endif %}
-				{{item.title()}}
-				{% endfor %}
-				dengan ketentuan waktu dan tempat sebagai berikut
-						</td>
-					</tr>
-					{% set tanggal_surat = surat.serialized_atribut['tanggal_pesta'] %}
-					<tr class="data-row">
-						<td>Hari / Tanggal</td>
-						<td>:</td>
-						<td>{{tanggal_surat.strftime('%A, %m %B %Y')}}
-					</tr>
-					<tr class="data-row">
-						<td>Waktu</td>
-						<td>:</td>
-						<td>{{surat.atribut.waktu_mulai}} - Selesai</td>
-					</tr>
-					<tr class="data-row">
-						<td>Tempat</td>
-						<td>:</td>
-						<td>{{surat.atribut.tempat}}</td>
-					</tr>
-				</table>
-
-				<table id="bordered">
-					<thead>
-						<tr>
-							<th width="40px">No.</th>
-							<th>Pesta</th>
-							<th width="70px">Jumlah</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for item in surat.atribut['jenis_pesta'] %}
-						<tr>
-							<td>{{loop.index}}</td>
-							<td>{{item}}</td>
-							<td>1</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-
+				An. {{surat.atribut['nama_awal']}} menjadi An. {{surat.penduduk.nama}} dengan nomor ID Pelanggan {{surat.atribut['id_pelanggan']}} dan Daya Listrik {{surat.atribut['daya_listrik']}} di {{surat.atribut['nama_cabang']}}.
+				</p>
+				<p>
+				Demikian Surat keterangan ini dibuat untuk digunakan seperlunya.
+				</p>
 
 				<table style="margin-top:40px;width:100%;">
 					<tr>
@@ -109,12 +82,26 @@
 							&nbsp;
 						</td>
 						<td style="text-align: center;">
-							{{desa.nama_desa.title()}}, {{tanggal}}
+							<table>
+								<tr>
+									<td width="50px">Dibuat Di</td>
+									<td width="5px">:</td>
+									<td>{{desa.nama_desa.title()}}</td>
+								</tr>
+								<tr>
+									<td width="50px">Tanggal</td>
+									<td width="5px">:</td>
+									<td>{{tanggal}}
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>
 						<td style="text-align:center;">
-							&nbsp;
+							Pemohon
+							<p style="margin-top:80px;">
+							<b><u>{{surat.penduduk.nama}}</u></b>
+							</p>
 						</td>
 						<td style="width:40%">
 							&nbsp;

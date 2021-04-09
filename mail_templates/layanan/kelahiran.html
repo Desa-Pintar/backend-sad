@@ -9,9 +9,7 @@
 	</center>
 
 	<br>
-	{% set nama_hari = ('senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu') %}
-	{% set nama_bulan = ('', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember') %}
-	{% set tanggal_surat = surat.serialized_atribut['kelahiran'].tanggal_kelahiran%}
+	{% set tanggal_surat = datetime.strptime(surat.serialized_atribut['kelahiran'].tanggal_kelahiran, '%Y-%m-%d')%}
 	<table style="width:100%;">
 		<tr>
 			<td colspan=3>
@@ -21,13 +19,13 @@
 		<tr class="data-row">
 			<td>Hari</td>
 			<td>:</td>
-			<td>{{nama_hari[tanggal_surat.weekday()].title()}}</td>
+			<td>{{tanggal_surat.strftime('%A')}}</td>
 		</tr>
 		<tr class="data-row">
 			<td>Tanggal</td>
 			<td>:</td>
 			<td>
-				{{tanggal_surat.day}} {{nama_bulan[tanggal_surat.month].title()}} {{tanggal_surat.year}}
+				{{tanggal_surat.strftime('%d %B %Y')}}
 			</td>
 		</tr>
 		<tr class="data-row">
