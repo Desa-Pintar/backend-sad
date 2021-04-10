@@ -1032,9 +1032,6 @@ class PotensiViewSet(DynamicModelViewSet):
     serializer_class = PotensiSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    filter_backends = [filters.SearchFilter]
-    search_fields = ["judul"]
-
     def get_queryset(self):
         kategori = self.request.query_params.get("kategori")
         if kategori:
