@@ -286,8 +286,18 @@ class SadKematianSuratSerializer(DynamicModelSerializer):
 
 
 class SadKematianSerializer(CustomSerializer):
-    penduduk = DynamicRelationField(
-        "v1.serializers.SadPendudukSerializer", deferred=True, embed=True
+    nama = serializers.CharField(source="penduduk.nama", read_only=True)
+    nik = serializers.CharField(source="penduduk.nik", read_only=True)
+    jenis_kelamin = serializers.CharField(source="penduduk.jk", read_only=True)
+    tgl_lahir = serializers.CharField(
+        source="penduduk.tgl_lahir", read_only=True
+    )
+    pekerjaan = serializers.CharField(
+        source="penduduk.pekerjaan", read_only=True
+    )
+    alamat = serializers.CharField(source="penduduk.alamat", read_only=True)
+    no_kk = serializers.CharField(
+        source="penduduk.keluarga.no_kk", read_only=True
     )
 
     def create(self, validated_data):
