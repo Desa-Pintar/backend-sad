@@ -569,11 +569,8 @@ class SadKematianViewSet(CustomView):
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
         extras = {
-            "NIK": "nik",
-            "Nama": "nama",
-            "Jenis Kelamin": "jenis_kelamin",
-            "Tanggal Lahir": "tgl_lahir",
-            "Pekerjaan": "pekerjaan",
+            "NIK": "sad_penduduk.nik",
+            "Nama": "sad_penduduk.nama",
             "Tanggal Kematian": "tanggal_kematian",
             "Tempat Kematian": "tempat_kematian",
             "Sebab Kematian": "sebab_kematian",
@@ -582,7 +579,7 @@ class SadKematianViewSet(CustomView):
         }
         data = (
             self.get_queryset()
-            .extra(select=extras)
+            .extra(select=extras, tables=("sad_penduduk",))
             .values(*extras.keys())
             .all()
         )
