@@ -559,8 +559,8 @@ class SigBidangViewSet(CustomView):
         for item in data["features"]:
             print(item["properties"])
             data = {
-                "nbt": item["properties"]["NBT"][:5],
-                "luas": item["properties"]["Luas"][:4],
+                "nbt": item["properties"]["NBT"][:10],
+                "luas": item["properties"]["Luas"][:5],
                 "longitude": item["properties"]["long"],
                 "latitude": item["properties"]["lat"],
                 "geometry": item["geometry"],
