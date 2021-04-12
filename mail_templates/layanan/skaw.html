@@ -6,9 +6,10 @@
 <br>
 <br>
 <p class"justify-text">
-Kami yang bertanda tangan dibawah ini adalah ahli waris dari Almarhum {{surat.serialized_atribut['almarhum']['nama'].upper()}}, menerangkan dengan sesungguhnya dan sanggup diangkat sumpah dihadapan saksi-saksi  yang akan disebutkan pada akhir surat keterangan ini, bahwa Almarhum {{surat.serialized_atribut['almarhum']['nama'].upper()}}.
+Kami yang bertanda tangan dibawah ini adalah ahli waris dari Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].upper()}},
+menerangkan dengan sesungguhnya dan sanggup diangkat sumpah dihadapan saksi-saksi  yang akan disebutkan pada akhir surat keterangan ini, bahwa Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].upper()}}.
 Meninggal di Desa {{desa.nama_desa.title()}} Kec.{{desa.kecamatan.nama_kecamatan.title()}},{{desa.kecamatan.kab_kota.nama_kab_kota.title()}} pada tanggal {{surat.serialized_atribut['kematian']['tanggal_kematian']}}.
-Bahwa Almarhum {{surat.serialized_atribut['almarhum']['nama'].title()}}  menikah dengan {{surat.atribut['pasangan']['nama'].title()}}
+Bahwa Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].title()}}  menikah dengan {{surat.atribut['pasangan']['nama'].title()}}
 {% if  surat.atribut['pasangan'].get('tanggal_meninggal') %}
 yang juga telah meinggal pada {{surat.atribut['pasangan']['tanggal_meninggal']}}
 {% else %}
@@ -73,7 +74,7 @@ Demikian surat keterangan ahli waris ini kami buat untuk di gunakan sebagaimana 
 			<table width="100%">
 				{% for item in surat.atribut['saksi'] %}
 				<tr>
-					<td>{{ loop.index }}</td>
+					<td>{{ loop.index }}.</td>
 					<td>{{ item['nama'] }}</td>
 					<td><pre>(				)</pre></td>
 				</tr>
@@ -93,7 +94,7 @@ Demikian surat keterangan ahli waris ini kami buat untuk di gunakan sebagaimana 
 			<table width="100%">
 				{% for item in surat.atribut['ahli_waris'] %}
 				<tr>
-					<td>{{ loop.index }}</td>
+					<td>{{ loop.index }}.</td>
 					<td>{{ item['nama'] }}</td>
 					<td><pre>(				)</pre></td>
 				</tr>

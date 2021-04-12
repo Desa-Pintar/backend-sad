@@ -1,3 +1,4 @@
+import locale
 from datetime import datetime
 
 from rest_framework import serializers
@@ -416,6 +417,7 @@ class AtributIzinPesta(serializers.Serializer):
     tanggal_pesta = serializers.SerializerMethodField()
 
     def get_tanggal_pesta(self, obj):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
         return datetime.strptime(obj["tanggal"], "%Y-%m-%d")
 
 
@@ -442,6 +444,7 @@ class AtributIzinKeramaian(serializers.Serializer):
     tanggal_pesta = serializers.SerializerMethodField()
 
     def get_tanggal_pesta(self, obj):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
         return datetime.strptime(obj["tanggal"], "%Y-%m-%d")
 
 
@@ -581,22 +584,17 @@ class PasanganMeninggal(serializers.Serializer):
 
 
 class AtributAhliWaris(serializers.Serializer):
-    almarhum_id = serializers.IntegerField()
+    kematian_id = serializers.IntegerField()
     pasangan = PasanganMeninggal()
     ahli_waris = PendudukMiniSuratSerializer(many=True)
     saksi = PendudukMiniSuratSerializer(many=True)
 
-    almarhum = serializers.SerializerMethodField()
     kematian = serializers.SerializerMethodField()
     jumlah_ahliwaris = serializers.SerializerMethodField()
 
     def get_kematian(self, obj):
-        kematian = SadKematian.objects.get(penduduk_id=obj["almarhum_id"])
+        kematian = SadKematian.objects.get(pk=obj["kematian_id"])
         return SadKematianSuratSerializer(kematian).data
-
-    def get_almarhum(self, obj):
-        penduduk = SadPenduduk.all_objects.get(pk=obj["almarhum_id"])
-        return SadPendudukMiniSerializer(penduduk).data
 
     def get_jumlah_ahliwaris(self, obj):
         return len(obj["ahli_waris"])
