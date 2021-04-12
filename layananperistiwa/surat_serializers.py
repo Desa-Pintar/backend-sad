@@ -1,3 +1,4 @@
+import locale
 from datetime import datetime
 
 from rest_framework import serializers
@@ -416,6 +417,7 @@ class AtributIzinPesta(serializers.Serializer):
     tanggal_pesta = serializers.SerializerMethodField()
 
     def get_tanggal_pesta(self, obj):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
         return datetime.strptime(obj["tanggal"], "%Y-%m-%d")
 
 
@@ -442,6 +444,7 @@ class AtributIzinKeramaian(serializers.Serializer):
     tanggal_pesta = serializers.SerializerMethodField()
 
     def get_tanggal_pesta(self, obj):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
         return datetime.strptime(obj["tanggal"], "%Y-%m-%d")
 
 
