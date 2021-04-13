@@ -573,9 +573,6 @@ class SadKematianViewSet(CustomView):
         extras = {
             "NIK": "nik",
             "Nama": "nama",
-            "Jenis Kelamin": "jenis_kelamin",
-            "Tanggal Lahir": "tgl_lahir",
-            "Pekerjaan": "pekerjaan",
             "Tanggal Kematian": "tanggal_kematian",
             "Tempat Kematian": "tempat_kematian",
             "Sebab Kematian": "sebab_kematian",
