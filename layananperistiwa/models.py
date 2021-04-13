@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 from api_sad_sig.util import CustomModel
-from v1.models import SadPenduduk
+from v1.models import SadPenduduk, SadKeluarga
 
 
 class LayananSurat(CustomModel):
@@ -312,8 +312,28 @@ class SadPindahKeluar(CustomModel):
     def anggota_keluar(self):
         nik_s = list(self.nik_pindah.split(","))
         if nik_s:
-            return SadPenduduk.all_objects.filter(pk__in=nik_s)
+            return SadPenduduk.all_objects.filter(pk__in=nik_s).all()
         return []
+
+    def alamat_pindah(self):
+        alamat = []
+        if self.rt_tujuan:
+            alamat.append(f"RT {self.rt_tujuan}")
+        if self.rw_tujuan:
+            alamat.append(f"RW {self.rw_tujuan}")
+        if self.dusun_tujuan:
+            alamat.append(f"Dusun {self.dusun_tujuan}")
+        alamat.append(f"Desa {self.kelurahan_tujuan.nama_desa.title()}")
+        alamat.append(
+            f"Kecamatan {self.kelurahan_tujuan.kecamatan.nama_kecamatan.title()}"
+        )
+        alamat.append(
+            f"{self.kelurahan_tujuan.kecamatan.kab_kota.nama_kab_kota.title()}"
+        )
+        alamat.append(
+            f"Provinsi {self.kelurahan_tujuan.kecamatan.kab_kota.provinsi.nama_provinsi.title()}"
+        )
+        return ", ".join(alamat)
 
     class Meta(CustomModel.Meta):
 
@@ -345,3 +365,14 @@ class SadPindahMasuk(CustomModel):
 class SadPecahKK(CustomModel):
     keluarga = models.ForeignKey("v1.SadKeluarga", models.DO_NOTHING)
     penduduk = models.ManyToManyField("v1.SadPenduduk")
+
+    # Use get function so if the related record is deleted,
+    # we it could still get taken.
+    def get_keluarga(self):
+        keluarga = SadKeluarga.all_objects.get(id=self.keluarga_id)
+        return keluarga
+
+    def get_penduduk(self):
+        penduduk_records = self.penduduk.through.objects.all()
+        penduduks = [i.sadpenduduk for i in penduduk_records]
+        return penduduks
