@@ -1,3 +1,4 @@
+import locale
 import pytz
 from csv import DictWriter
 from io import BytesIO, StringIO
@@ -5,6 +6,7 @@ from datetime import datetime, date
 from rest_framework import permissions, filters
 from openpyxl import Workbook
 
+import pandas as pd
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -569,8 +571,11 @@ class SadKematianViewSet(CustomView):
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
         extras = {
-            "NIK": "sad_penduduk.nik",
-            "Nama": "sad_penduduk.nama",
+            "NIK": "nik",
+            "Nama": "nama",
+            "Jenis Kelamin": "jenis_kelamin",
+            "Tanggal Lahir": "tgl_lahir",
+            "Pekerjaan": "pekerjaan",
             "Tanggal Kematian": "tanggal_kematian",
             "Tempat Kematian": "tempat_kematian",
             "Sebab Kematian": "sebab_kematian",
@@ -579,7 +584,11 @@ class SadKematianViewSet(CustomView):
         }
         data = (
             self.get_queryset()
-            .extra(select=extras, tables=("sad_penduduk",))
+            .extra(
+                select=extras,
+                tables=("sad_penduduk",),
+                where=["penduduk_id=sad_penduduk.id"],
+            )
             .values(*extras.keys())
             .all()
         )
@@ -716,6 +725,42 @@ class SadPindahKeluarViewSet(CustomView):
         data["anggota_keluar"] = penduduk_data
         return Response(data)
 
+    @action(detail=False, methods=["GET"])
+    def ekspor(self, request):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
+        records = self.queryset.all()
+        data = [
+            {
+                "No KK": item.nomor_kk,
+                "Alasan": item.alasan.nama,
+                "Alamat": item.alamat_pindah(),
+                "Klasifikasi": item.klasifikasi_pindah.nama,
+                "Jenis": item.jenis_kepindahan.nama,
+                "Status KK Pindah": item.status_kk_pindah.nama,
+                "Status KK Tinggal": item.status_kk_pindah.nama,
+                "Rencana Tanggal Pindah": item.rencana_tgl_pindah.strftime(
+                    "%d %B %Y"
+                ),
+                "Anggota": "\n".join(
+                    f"{i.nama} ({i.nik})" for i in item.anggota_keluar()
+                ),
+            }
+            for item in records
+        ]
+        df = pd.DataFrame(data)
+        df.reset_index(drop=True, inplace=True)
+        with BytesIO() as b:
+            writer = pd.ExcelWriter(b)
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
+            writer.save()
+            return HttpResponse(
+                b.getvalue(),
+                content_type=(
+                    "application/vnd.openxmlformats-"
+                    "officedocument.spreadsheetml.sheet"
+                ),
+            )
+
 
 class SadPindahMasukViewSet(CustomView):
     queryset = SadPindahMasuk.objects.all().order_by("id")
@@ -727,7 +772,7 @@ class SadPindahMasukViewSet(CustomView):
 
 
 class SadPecahKKViewSet(CustomView):
-    queryset = SadPecahKK.objects.order_by("id").all()
+    queryset = SadPecahKK.objects.order_by("id")
     serializer_class = SadPecahKKSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -738,3 +783,31 @@ class SadPecahKKViewSet(CustomView):
         if self.action in ["update", "delete"]:
             raise NotFound("Operasi ini tidak tersedia")
         return SadPecahKKSerializer
+
+    @action(detail=False, methods=["GET"])
+    def ekspor(self, request):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
+        records = self.queryset.all()
+        data = [
+            {
+                "No KK": item.get_keluarga().no_kk,
+                "Tanggal": item.created_at.strftime("%d %B %Y"),
+                "anggota": "\n".join(
+                    f"{i.nama} ({i.nik})" for i in item.get_penduduk()
+                ),
+            }
+            for item in records
+        ]
+        df = pd.DataFrame(data)
+        df.reset_index(drop=True, inplace=True)
+        with BytesIO() as b:
+            writer = pd.ExcelWriter(b)
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
+            writer.save()
+            return HttpResponse(
+                b.getvalue(),
+                content_type=(
+                    "application/vnd.openxmlformats-"
+                    "officedocument.spreadsheetml.sheet"
+                ),
+            )
