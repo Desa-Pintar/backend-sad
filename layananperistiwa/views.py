@@ -571,8 +571,8 @@ class SadKematianViewSet(CustomView):
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
         extras = {
-            "NIK": "sad_penduduk.nik",
-            "Nama": "sad_penduduk.nama",
+            "NIK": "nik",
+            "Nama": "nama",
             "Tanggal Kematian": "tanggal_kematian",
             "Tempat Kematian": "tempat_kematian",
             "Sebab Kematian": "sebab_kematian",

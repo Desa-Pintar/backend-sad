@@ -100,6 +100,7 @@ class SadDesa(CustomModel):
     visi_misi = models.TextField(blank=True, null=True)
     sejarah = models.TextField(blank=True, null=True)
     logo = models.ImageField(upload_to=file_destination, blank=True, null=True)
+    gambar = models.ImageField(upload_to=file_destination, blank=True, null=True)
     facebook = models.CharField(max_length=150, blank=True, null=True)
     twitter = models.CharField(max_length=150, blank=True, null=True)
     instagram = models.CharField(max_length=150, blank=True, null=True)
