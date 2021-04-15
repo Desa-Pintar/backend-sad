@@ -300,7 +300,7 @@ class SadPenduduk(CustomModel):
     status_penduduk = models.CharField(max_length=20, blank=True, null=True)
     kewarganegaraan = models.CharField(max_length=20, blank=True, null=True)
     anak_ke = models.CharField(max_length=5, blank=True, null=True)
-    golongan_darah = models.CharField(max_length=5, blank=True, null=True)
+    golongan_darah = models.CharField(max_length=10, blank=True, null=True)
     status_dalam_keluarga = models.CharField(
         max_length=20, blank=True, null=True
     )
