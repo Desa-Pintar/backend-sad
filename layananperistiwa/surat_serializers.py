@@ -81,8 +81,10 @@ class BaseAdminSuratSerializer(CustomSerializer):
 
 class BasePendudukSuratSerializer(CustomSerializer):
     def create(self, data):
-        print(data)
         surat = LayananSurat(jenis=self.Meta.jenis_surat, **data)
+        surat.penduduk = self.context["request"].user.profile
+        if not data.get("atribut"):
+            surat.atribut = {}
         surat.save()
         return surat
 
@@ -92,6 +94,7 @@ class BasePendudukSuratSerializer(CustomSerializer):
         exclude = [
             "pegawai",
             "penduduk",
+            "no_surat",
             "jenis",
             "created_by",
             "created_at",
