@@ -781,7 +781,7 @@ serializer_list = {
     "skck": (
         AdminSKCKSerializer,
         PendudukSKCKSerializer,
-        "Surat Keterangan Kelakuan Baik",
+        "Surat Keterangan Catatan Kepolisian",
     ),
     "domisili": (
         AdminDomisiliSerializer,
