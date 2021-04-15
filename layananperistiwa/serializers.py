@@ -394,12 +394,12 @@ class SadPindahMasukSerializer(CustomSerializer):
             "rt": validated_data.pop("rt_id", None),
             "dusun": validated_data.pop("dusun_id", None),
         }
+        print(data_alamat)
         nama_alamat = validated_data.pop("nama_alamat")
         if not data_alamat.get("dusun"):
             raise APIException("Need dusun_id ", 400)
 
         keluarga_data = validated_data.copy()
-        print("This 1")
         keluarga_data["status_kk"] = keluarga_data.pop(
             "status_kk_pindah"
         ).label
@@ -412,17 +412,22 @@ class SadPindahMasukSerializer(CustomSerializer):
             )
             print(keluarga_data)
         except Exception:
+            print("Gagal")
             return Response({"msg": "Gagal menyimpan data keluarga"}, 400)
         keluarga.save()
 
-        dusun_id = data_alamat.get("dusun_id")
+        dusun_id = data_alamat.get("dusun")
         if keluarga.alamat:
             keluarga.alamat.set_from_dusun(dusun_id)
+            keluarga.alamat.jalan_blok = nama_alamat
+            keluarga.alamat.save()
         else:
-            keluarga.alamat = Alamat()
-            keluarga.alamat.set_from_dusun(dusun_id)
-        keluarga.alamat.alamat = nama_alamat
-        keluarga.alamat.save()
+            alamat = Alamat()
+            alamat.set_from_dusun(int(dusun_id))
+            alamat.jalan_blok = nama_alamat
+            alamat.save()
+            keluarga.alamat = alamat
+            keluarga.save()
 
         sad_masuk = SadPindahMasuk(**validated_data)
         sad_masuk.alamat = keluarga.alamat
