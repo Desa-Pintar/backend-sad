@@ -9,12 +9,12 @@
 Kami yang bertanda tangan dibawah ini adalah ahli waris dari Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].upper()}},
 menerangkan dengan sesungguhnya dan sanggup diangkat sumpah dihadapan saksi-saksi  yang akan disebutkan pada akhir surat keterangan ini, bahwa Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].upper()}}.
 Meninggal di Desa {{desa.nama_desa.title()}} Kec.{{desa.kecamatan.nama_kecamatan.title()}},{{desa.kecamatan.kab_kota.nama_kab_kota.title()}} pada tanggal {{surat.serialized_atribut['kematian']['tanggal_kematian']}}.
-Bahwa Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].title()}}  menikah dengan {{surat.atribut['pasangan']['nama'].title()}}
-{% if  surat.atribut['pasangan'].get('tanggal_meninggal') %}
+Bahwa Almarhum {{surat.serialized_atribut['kematian']['penduduk']['nama'].upper()}} menikah dengan {{surat.atribut['pasangan']['nama'].upper()}}, umur, {{surat.atribut['pasangan']['umur']}} Tahun, bertempat tinggal di {{surat.atribut['pasangan']['alamat']}}
+<!-- {% if  surat.atribut['pasangan'].get('tanggal_meninggal') %}
 yang juga telah meinggal pada {{surat.atribut['pasangan']['tanggal_meninggal']}}
-{% else %}
-, umur, {{surat.atribut['pasangan']['umur']}} Tahun, bertempat tinggal di {{surat.atribut['pasangan']['alamat']}} 
-{% endif %}
+{% else %} -->
+ 
+<!-- {% endif %} -->
 telah dikaruniai {{surat.serialized_atribut['jumlah_ahliwaris']}}  orang anak yakni :
 </p>
 <br>
