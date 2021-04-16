@@ -767,6 +767,38 @@ class SadPindahMasukViewSet(CustomView):
     filter_backends = [filters.SearchFilter]
     search_fields = ["no_kk"]
 
+    @action(detail=False, methods=["GET"])
+    def ekspor(self, request):
+        locale.setlocale(locale.LC_TIME, "id_ID.UTF-8")
+        records = self.queryset.all()
+        data = [
+            {
+                "No KK": item.no_kk,
+                "Alamat": item.alamat.alamat_lengkap(),
+                "Status KK Pindah": item.status_kk_pindah.nama,
+                "Tanggal Kedatangan": item.tanggal_kedatangan.strftime(
+                    "%d %B %Y"
+                ),
+                "Anggota": "\n".join(
+                    f"{i.nama} ({i.nik})" for i in item.anggota()
+                ),
+            }
+            for item in records
+        ]
+        df = pd.DataFrame(data)
+        df.reset_index(drop=True, inplace=True)
+        with BytesIO() as b:
+            writer = pd.ExcelWriter(b)
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
+            writer.save()
+            return HttpResponse(
+                b.getvalue(),
+                content_type=(
+                    "application/vnd.openxmlformats-"
+                    "officedocument.spreadsheetml.sheet"
+                ),
+            )
+
 
 class SadPecahKKViewSet(CustomView):
     queryset = SadPecahKK.objects.order_by("id")

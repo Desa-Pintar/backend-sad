@@ -16,6 +16,8 @@ from v1.models import SadKeluarga, SadPenduduk, Alamat
 from v1.serializers import (
     PegawaiSerializer,
     SadDesaSerializer,
+    SadPendudukMiniSerializer,
+    SadKeluargaSerializer,
 )
 
 from .models import (
@@ -377,12 +379,26 @@ class SadPindahMasukSerializer(CustomSerializer):
     status_kk_pindah = DynamicRelationField(
         "StatusKKPindahSerializer", deferred=False, embed=True, write_only=True
     )
-    anggota = serializers.ListField(
+    anggota_masuk = serializers.ListField(
         child=MiniUserSerializer(), write_only=True
     )
     nama_alamat = serializers.CharField(write_only=True)
     rt_id = serializers.IntegerField(write_only=True, required=False)
     dusun_id = serializers.IntegerField(write_only=True, required=False)
+    data_anggota_keluarga = serializers.SerializerMethodField()
+    data_keluarga = serializers.SerializerMethodField()
+
+    def get_data_anggota_keluarga(self, obj):
+        items = []
+        for item in obj.anggota():
+            items.append(SadPendudukMiniSerializer(item).data)
+        return items
+
+    def get_data_keluarga(self, obj):
+        item = obj.keluarga()
+        if not item:
+            return None
+        return SadKeluargaSerializer(item).data
 
     def create(self, validated_data):
         anggota = validated_data.pop("anggota")
@@ -432,6 +448,7 @@ class SadPindahMasukSerializer(CustomSerializer):
         sad_masuk = SadPindahMasuk(**validated_data)
         sad_masuk.alamat = keluarga.alamat
 
+        daftar_id_penduduk = []
         for item in anggota:
             penduduk_filter = {"nik": item["nik"]}
             try:
@@ -447,7 +464,9 @@ class SadPindahMasukSerializer(CustomSerializer):
             penduduk.user = user
             penduduk.keluarga = keluarga
             penduduk.save()
+            daftar_id_penduduk.append(penduduk.id)
 
+        sad_masuk.nik_datang = ",".join(daftar_id_penduduk)
         sad_masuk.save()
         return sad_masuk
 
