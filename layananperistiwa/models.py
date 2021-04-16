@@ -324,15 +324,15 @@ class SadPindahKeluar(CustomModel):
         if self.dusun_tujuan:
             alamat.append(f"Dusun {self.dusun_tujuan}")
         alamat.append(f"Desa {self.kelurahan_tujuan.nama_desa.title()}")
-        alamat.append(
-            f"Kecamatan {self.kelurahan_tujuan.kecamatan.nama_kecamatan.title()}"
-        )
+        nama_kecamatan = self.kelurahan_tujuan.kecamatan.nama_kecamatan
+        alamat.append(f"Kecamatan {nama_kecamatan.title()}")
         alamat.append(
             f"{self.kelurahan_tujuan.kecamatan.kab_kota.nama_kab_kota.title()}"
         )
-        alamat.append(
-            f"Provinsi {self.kelurahan_tujuan.kecamatan.kab_kota.provinsi.nama_provinsi.title()}"
+        nama_provinsi = (
+            self.kelurahan_tujuan.kecamatan.kab_kota.provinsi.nama_provinsi
         )
+        alamat.append(f"Provinsi {nama_provinsi.title()}")
         return ", ".join(alamat)
 
     class Meta(CustomModel.Meta):
@@ -351,11 +351,16 @@ class SadPindahMasuk(CustomModel):
     )
     nik_datang = models.CharField(max_length=128, blank=True, null=True)
 
-    def anggota_masuk(self):
+    def anggota(self):
         nik_s = list(self.nik_datang.split(","))
         if nik_s:
-            return SadPenduduk.all_objects.filter(pk__in=nik_s)
+            return [
+                i for i in SadPenduduk.all_objects.filter(pk__in=nik_s).all()
+            ]
         return []
+
+    def keluarga(self):
+        return SadKeluarga.all_objects.filter(no_kk=self.no_kk).first()
 
     class Meta(CustomModel.Meta):
 
