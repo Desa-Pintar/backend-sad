@@ -390,7 +390,7 @@ class SadPindahMasukSerializer(CustomSerializer):
 
     def get_data_anggota_keluarga(self, obj):
         items = []
-        for item in obj.anggota():
+        for item in obj.anggota_masuk():
             items.append(SadPendudukMiniSerializer(item).data)
         return items
 

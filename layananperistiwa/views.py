@@ -780,7 +780,7 @@ class SadPindahMasukViewSet(CustomView):
                     "%d %B %Y"
                 ),
                 "Anggota": "\n".join(
-                    f"{i.nama} ({i.nik})" for i in item.anggota()
+                    f"{i.nama} ({i.nik})" for i in item.anggota_masuk()
                 ),
             }
             for item in records
