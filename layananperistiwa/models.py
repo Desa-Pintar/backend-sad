@@ -351,7 +351,7 @@ class SadPindahMasuk(CustomModel):
     )
     nik_datang = models.CharField(max_length=128, blank=True, null=True)
 
-    def anggota(self):
+    def anggota_masuk(self):
         nik_s = list(self.nik_datang.split(","))
         if nik_s:
             return [
