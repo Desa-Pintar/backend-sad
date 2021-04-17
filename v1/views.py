@@ -1393,42 +1393,31 @@ class AbsensiViewSet(DynamicModelViewSet):
     serializer_class = AbsensiSerializer
     permission_classes = [AllowAny]
 
+    def transform(self, data):
+        return {
+            "nama": data["nama"],
+            "jabatan": data["jabatan"],
+            "jam_masuk": data["jam_masuk"],
+            "jam_keluar": data["jam_keluar"],
+        }
+
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
-        extras = {
-            "Nama": "pegawai.nama",
-            "Jabatan": "pegawai.jabatan",
-            "Tanggal/Jam Masuk": "jam_masuk",
-            "Tanggal/Jam Keluar": "jam_keluar"
-        }
-        data = (
-            self.get_queryset()
-            .extra(select=extras, tables=("pegawai",))
-            .values(*extras.keys())
-            .all()
-        )
-
-        workbook = Workbook()
-        sheet = workbook.active
-
-        headers = [i for i in extras.keys()]
-        for index, value in enumerate(headers):
-            sheet.cell(row=1, column=index + 1).value = value
-
-        for i, x in enumerate(data):
-            for idx, value in enumerate(x.values()):
-                sheet.cell(row=i + 2, column=idx + 1).value = value
-
-        output = BytesIO()
-        workbook.save(output)
-        response = HttpResponse(
-            output.getvalue(),
-            content_type="application/vnd.ms-excel",
-        )
-        response[
-            "Content-Disposition"
-        ] = 'attachment; filename="DataPresensi.xlsx"'
-        return response
+        with BytesIO() as b:
+            writer = pandas.ExcelWriter(b)
+            item = Absensi.objects.all()
+            serializer = AbsensiSerializer(item, many=True)
+            df = pandas.DataFrame(list(map(self.transform, serializer.data)))
+            df.reset_index(drop=True, inplace=True)
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
+            writer.save()
+            return HttpResponse(
+                b.getvalue(),
+                content_type=(
+                    "application/vnd.openxmlformats-"
+                    "officedocument.spreadsheetml.sheet"
+                ),
+            )
 
 
 class AlasanIzinViewSet(DynamicModelViewSet):
