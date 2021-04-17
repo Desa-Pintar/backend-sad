@@ -57,6 +57,44 @@ class PegawaiViewSet(CustomView):
     serializer_class = PegawaiSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    @action(detail=False, methods=["get"])
+    def ekspor(self, request):
+        extras = {
+            "Nip": "nip",
+            "Nama": "nama",
+            "Jabatan": "jabatan",
+            "Status": "status",
+            "Url Foto": "gambar",
+        }
+        data = (
+            self.get_queryset()
+            .extra(select=extras)
+            .values(*extras.keys())
+            .all()
+        )
+
+        workbook = Workbook()
+        sheet = workbook.active
+
+        headers = [i for i in extras.keys()]
+        for index, value in enumerate(headers):
+            sheet.cell(row=1, column=index + 1).value = value
+
+        for i, x in enumerate(data):
+            for idx, value in enumerate(x.values()):
+                sheet.cell(row=i + 2, column=idx + 1).value = value
+
+        output = BytesIO()
+        workbook.save(output)
+        response = HttpResponse(
+            output.getvalue(),
+            content_type="application/vnd.ms-excel",
+        )
+        response[
+            "Content-Disposition"
+        ] = 'attachment; filename="DataPerangkat.xlsx"'
+        return response
+
     def transform(self, data):
         return {
             "nama": data["nama"],
@@ -65,7 +103,7 @@ class PegawaiViewSet(CustomView):
         }
 
     @action(detail=False, methods=["get"])
-    def ekspor(self, request):
+    def print(self, request):
         with BytesIO() as b:
             writer = pandas.ExcelWriter(b)
             item = Pegawai.objects.all()
