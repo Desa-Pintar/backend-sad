@@ -95,6 +95,7 @@ class PegawaiViewSet(CustomView):
         ] = 'attachment; filename="DataPerangkat.xlsx"'
         return response
 
+
     def transform(self, data):
         return {
             "nama": data["nama"],
