@@ -57,6 +57,32 @@ class PegawaiViewSet(CustomView):
     serializer_class = PegawaiSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    def transform(self, data):
+        return {
+            "nama": data["nama"],
+            "jabatan": data["jabatan"],
+            "totalabsensi": data["totalabsensi"],
+        }
+
+    @action(detail=False, methods=["get"])
+    def ekspor(self, request):
+        with BytesIO() as b:
+            writer = pandas.ExcelWriter(b)
+            item = Pegawai.objects.all()
+            serializer = PegawaiSerializer(item, many=True)
+            df = pandas.DataFrame(list(map(self.transform, serializer.data)))
+            df.reset_index(drop=True, inplace=True)
+            df.to_excel(writer, sheet_name="Sheet1", index=0)
+            writer.save()
+            return HttpResponse(
+                b.getvalue(),
+                content_type=(
+                    "application/vnd.openxmlformats-"
+                    "officedocument.spreadsheetml.sheet"
+                ),
+            )
+
+
 class BatasDesaViewSet(CustomView):
     queryset = BatasDesa.objects.all().order_by("id")
     serializer_class = BatasDesaSerializer
@@ -227,8 +253,6 @@ class SadKeluargaViewSet(DynamicModelViewSet):
                 status["data_redundan"] += 1
                 continue
             except Exception as e:
-                print(item)
-                print(e)
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
@@ -573,7 +597,6 @@ class SigBidangViewSet(CustomView):
         data = json.load(file)
 
         for item in data["features"]:
-            print(item["properties"])
             data = {
                 "nbt": item["properties"]["NBT"][:10],
                 "luas": item["properties"]["Luas"][:5],
@@ -1438,7 +1461,6 @@ class LaporanAbsensiViewSet(DynamicModelViewSet):
     permission_classes = [IsAdminUserOrReadOnly]
 
     def get_serializer_class(self):
-        print(self.action)
         if self.action not in ["list", "create"]:
             raise NotFound("Operasi ini tidak tersedia")
         return self.serializer_class
