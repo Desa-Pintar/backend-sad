@@ -1,0 +1,76 @@
+{% extends 'layanan/base.html' %}
+
+{% block content %}
+			<div>
+				<br>
+					<h3>HAL : PERMOHONAN</h3>
+
+				<br>
+				KEPADA YTH :
+				<br>
+				Bapak Kepala BRI Unit Kwandang
+				<br>
+				Di Kwandang
+				<br>
+				<table style="width:100%;">
+					<tr>
+						<td colspan=3>
+							Dengan hormat,<br>
+							Yang bertanda tangan di bawah ini:
+						</td>
+					</tr>
+					<tr class="data-row">
+						<td style="width:400px;">Nama</td>
+						<td style="width:5px;">:</td>
+						<td>{{surat.penduduk.nama}}</td>
+					</tr>
+					<tr class="data-row">
+						<td style="width:400px;">Nama Ibu Kandung</td>
+						<td style="width:10px;">:</td>
+						<td>{{surat.nama_ibu_kandung}}</td>
+					</tr>
+					<tr class="data-row">
+						<td>Tempat Tanggal Lahir</td>
+						<td>:</td>
+						<td>{{surat.penduduk.tempat_lahir}} , {{surat.penduduk.tgl_lahir}}</td>
+					</tr>
+					<tr class="data-row">
+						<td>Pekerjaan</td>
+						<td>:</td>
+						<td>{{surat.penduduk.pekerjaan}}</td>
+					</tr>
+					<tr class="data-row">
+						<td>Alamat</td>
+						<td>:</td>
+						<td>Desa Pontolo Kecamatan Kwandang</td>
+					</tr>
+					<tr class="data-row">
+						<td>No. HP</td>
+						<td>:</td>
+						<td>{{surat.penduduk.no_hp}}</td>
+					</tr>
+				</table>
+				<p> Dengan ini mengajukan permohonan kiranya kami dapat disetujui untuk beroleh bantuan kredit sebesar Rp. {{surat.nominal}} ( {{surat.ejaan}} Jangka waktu {{surat.jangka_waktu}}. Kredit KUR tersebut akan kami pergunakan untuk {{surat.kegunaan}}</p>
+				<p>Untuk bahan pertimbangan Bapak bersama ini kami lampirkan :</p>
+				<ul>Agunan Kredit Berupa {{surat.agunan}}</ul>
+				<ul>Copy Kartu Tanda Penduduk Suami & Istri yang masih berlaku</ul>
+				<ul>Fotocopy Kartu  Keluarga</ul>
+				<ul>Fotocopy Buku Nikah</ul>
+				<ul>Surat Keterangan Usaha</ul>
+				<ul>Pas Foto Suami Istri</ul>
+				<ul>Fotocopy Surat Ijin Lainnya (Jika Ada)</ul>
+				<p>Demikian permohonan ini dan atas perkenaan dan kebijaksaan Bapak kami sampaikan terimakasih</p>
+
+				<table style="margin-top:40px;width:100%;">
+					<tr>
+						<td style="text-align: center;">
+							Yang Bermohon
+							<p style="margin-top:80px;">
+							<b><u>{{surat.penduduk.nama}}</u></b>
+							</p>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+{% endblock %}
