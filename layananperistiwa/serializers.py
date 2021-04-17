@@ -379,7 +379,7 @@ class SadPindahMasukSerializer(CustomSerializer):
     status_kk_pindah = DynamicRelationField(
         "StatusKKPindahSerializer", deferred=False, embed=True, write_only=True
     )
-    anggota_masuk = serializers.ListField(
+    anggota = serializers.ListField(
         child=MiniUserSerializer(), write_only=True
     )
     nama_alamat = serializers.CharField(write_only=True)
