@@ -385,22 +385,27 @@ class SadPindahMasukSerializer(CustomSerializer):
     nama_alamat = serializers.CharField(write_only=True)
     rt_id = serializers.IntegerField(write_only=True, required=False)
     dusun_id = serializers.IntegerField(write_only=True, required=False)
-    data_anggota_keluarga = serializers.SerializerMethodField()
-    data_keluarga = serializers.SerializerMethodField()
+    data_anggota_keluarga = serializers.SerializerMethodField(read_only=True)
+    data_keluarga = serializers.SerializerMethodField(read_only=True)
 
     def get_data_anggota_keluarga(self, obj):
+        if not isinstance(obj, SadPindahMasuk):
+            return []
         items = []
         for item in obj.anggota_masuk():
             items.append(SadPendudukMiniSerializer(item).data)
         return items
 
     def get_data_keluarga(self, obj):
+        if not isinstance(obj, SadPindahMasuk):
+            return None
         item = obj.keluarga()
         if not item:
             return None
         return SadKeluargaSerializer(item).data
 
     def create(self, validated_data):
+        print(validated_data)
         anggota = validated_data.pop("anggota")
 
         if SadKeluarga.objects.filter(no_kk=validated_data["no_kk"]).exists():
@@ -426,10 +431,9 @@ class SadPindahMasukSerializer(CustomSerializer):
             keluarga = create_or_reactivate(
                 SadKeluarga, keluarga_filter, keluarga_data
             )
-            print(keluarga_data)
         except Exception:
             print("Gagal")
-            return Response({"msg": "Gagal menyimpan data keluarga"}, 400)
+            raise APIException("Gagal menyimpan data penduduk", 500)
         keluarga.save()
 
         dusun_id = data_alamat.get("dusun")
@@ -449,15 +453,19 @@ class SadPindahMasukSerializer(CustomSerializer):
         sad_masuk.alamat = keluarga.alamat
 
         daftar_id_penduduk = []
+        print(daftar_id_penduduk)
         for item in anggota:
             penduduk_filter = {"nik": item["nik"]}
             try:
                 penduduk = create_or_reactivate(
                     SadPenduduk, penduduk_filter, item
                 )
-            except Exception:
+            except Exception as e:
+                print(e)
                 keluarga.delete()
-                return Response({"msg": "Data Penduduk Gagal"})
+                raise serializers.ValidationError(
+                    detail="Gagal Menyimpan anggota keluarga"
+                )
             user = create_or_reactivate_user(
                 item["nik"], str(item["tgl_lahir"]).replace("-", "")
             )
@@ -466,7 +474,7 @@ class SadPindahMasukSerializer(CustomSerializer):
             penduduk.save()
             daftar_id_penduduk.append(penduduk.id)
 
-        sad_masuk.nik_datang = ",".join(daftar_id_penduduk)
+        sad_masuk.nik_datang = ",".join(str(i) for i in daftar_id_penduduk)
         sad_masuk.save()
         return sad_masuk
 
