@@ -2,40 +2,16 @@
 
 {% block content %}
 			<div>
-				<table style="margin-top:40px;width:100%;">
-					<tr>
-						<td style="text-align:center;">
-							&nbsp;
-						</td>
-						<td style="width:40%">
-							&nbsp;
-						</td>
-						<td style="text-align: center;">
-							<h3>HAL : PERMOHONAN</h3>
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align:center;">
-							<p style="margin-top:80px;">
-							<b><u></u></b>
-							</p>
-						</td>
-						<td style="width:40%">
-							&nbsp;
-						</td>
-						<td style="text-align: center;">
-							<p style="margin-top:80px;">
-							<br>
-								KEPADA YTH :
-								<br>
-								Bapak Kepala BRI Unit Kwandang
-								<br>
-								Di Kwandang
-								<br>
-							</p>
-						</td>
-					</tr>
-				</table>
+				<div class="row mt-3 mb-2">
+					<div class="col-md-6">
+						<h3>HAL : PERMOHONAN</h3>
+					</div>
+					<div class="col-md-6">
+								<span> YTH : </span>
+								<span>Bapak Kepala BRI Unit Kwandang</span>
+								<span>Di Kwandang</span>
+					</div>
+				</div>
 				<table style="width:100%;">
 					<tr>
 						<td colspan=3>
@@ -115,6 +91,16 @@
 							</td>
 						</tr>
 					</table>
+					<div class="row mt-3 mb-2">
+						<div class="col-md-6">
+						</div>
+						<div class="col-md-6 text-center">
+							Yang Bermohon
+							<p style="margin-top:80px;">
+							<b><u>{{surat.penduduk.nama}}</u></b>
+							</p>
+						</div>
+					</div>
 			</div>
 
 {% endblock %}
