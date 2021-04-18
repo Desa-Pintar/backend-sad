@@ -2,16 +2,40 @@
 
 {% block content %}
 			<div>
-				<br>
-					<h3>HAL : PERMOHONAN</h3>
-
-				<br>
-				KEPADA YTH :
-				<br>
-				Bapak Kepala BRI Unit Kwandang
-				<br>
-				Di Kwandang
-				<br>
+				<table style="margin-top:40px;width:100%;">
+					<tr>
+						<td style="text-align:center;">
+							&nbsp;
+						</td>
+						<td style="width:40%">
+							&nbsp;
+						</td>
+						<td style="text-align: center;">
+							<h3>HAL : PERMOHONAN</h3>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align:center;">
+							<p style="margin-top:80px;">
+							<b><u></u></b>
+							</p>
+						</td>
+						<td style="width:40%">
+							&nbsp;
+						</td>
+						<td style="text-align: center;">
+							<p style="margin-top:80px;">
+							<br>
+								KEPADA YTH :
+								<br>
+								Bapak Kepala BRI Unit Kwandang
+								<br>
+								Di Kwandang
+								<br>
+							</p>
+						</td>
+					</tr>
+				</table>
 				<table style="width:100%;">
 					<tr>
 						<td colspan=3>
@@ -27,7 +51,7 @@
 					<tr class="data-row">
 						<td style="width:400px;">Nama Ibu Kandung</td>
 						<td style="width:10px;">:</td>
-						<td>{{surat.nama_ibu_kandung}}</td>
+						<td>{{surat.atribut['nama_ibu_kandung']}}</td>
 					</tr>
 					<tr class="data-row">
 						<td>Tempat Tanggal Lahir</td>
@@ -52,25 +76,45 @@
 				</table>
 				<p> Dengan ini mengajukan permohonan kiranya kami dapat disetujui untuk beroleh bantuan kredit sebesar Rp. {{surat.nominal}} ( {{surat.ejaan}} Jangka waktu {{surat.jangka_waktu}}. Kredit KUR tersebut akan kami pergunakan untuk {{surat.kegunaan}}</p>
 				<p>Untuk bahan pertimbangan Bapak bersama ini kami lampirkan :</p>
-				<ul>Agunan Kredit Berupa {{surat.agunan}}</ul>
-				<ul>Copy Kartu Tanda Penduduk Suami & Istri yang masih berlaku</ul>
-				<ul>Fotocopy Kartu  Keluarga</ul>
-				<ul>Fotocopy Buku Nikah</ul>
-				<ul>Surat Keterangan Usaha</ul>
-				<ul>Pas Foto Suami Istri</ul>
-				<ul>Fotocopy Surat Ijin Lainnya (Jika Ada)</ul>
+				<ul>
+					<li>Agunan Kredit Berupa {{surat.agunan}}</li>
+					<li>Copy Kartu Tanda Penduduk Suami & Istri yang masih berlaku</li>
+					<li>Fotocopy Kartu  Keluarga</li>
+					<li>Fotocopy Buku Nikah</li>
+					<li>Surat Keterangan Usaha</li>
+					<li>Pas Foto Suami Istri</li>
+					<li>Fotocopy Surat Ijin Lainnya (Jika Ada)</li>
+				</ul>
 				<p>Demikian permohonan ini dan atas perkenaan dan kebijaksaan Bapak kami sampaikan terimakasih</p>
 
-				<table style="margin-top:40px;width:100%;">
-					<tr>
-						<td style="text-align: center;">
-							Yang Bermohon
-							<p style="margin-top:80px;">
-							<b><u>{{surat.penduduk.nama}}</u></b>
-							</p>
-						</td>
-					</tr>
-				</table>
+					<table style="margin-top:40px;width:100%;">
+						<tr>
+							<td style="text-align:center;">
+								&nbsp;
+							</td>
+							<td style="width:40%">
+								&nbsp;
+							</td>
+							<td style="text-align: center;">
+							</td>
+						</tr>
+						<tr>
+							<td style="text-align:center;">
+								<p style="margin-top:80px;">
+								<b><u></u></b>
+								</p>
+							</td>
+							<td style="width:40%">
+								&nbsp;
+							</td>
+							<td style="text-align: center;">
+								Yang Bermohon
+								<p style="margin-top:80px;">
+								<b><u>{{surat.penduduk.nama}}</u></b>
+								</p>
+							</td>
+						</tr>
+					</table>
 			</div>
 
 {% endblock %}
