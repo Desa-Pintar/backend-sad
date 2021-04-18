@@ -811,9 +811,9 @@ class TenagaKesehatanSerializer(DynamicModelSerializer):
 
 
 class AbsensiSerializer(DynamicModelSerializer):
-    # pegawai = DynamicRelationField(
-    #     "PegawaiSerializer", deferred=True, embed=True
-    # )
+    pegawai = DynamicRelationField(
+        "PegawaiSerializer", deferred=True, embed=True
+    )
     nama = serializers.CharField(
         source="pegawai.nama", read_only=True
     )
