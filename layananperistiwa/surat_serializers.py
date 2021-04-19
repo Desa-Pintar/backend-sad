@@ -734,7 +734,85 @@ class PendudukPermohonanBRI(BasePendudukSuratSerializer):
         jenis_surat = "perm_bri"
 
 
+class AtributKeteranganAhliWaris(serializers.Serializer):
+    kematian_id = serializers.IntegerField()
+    kematian = serializers.SerializerMethodField()
+    hubungan_dengan_almarhum = serializers.CharField()
+    reg_dtks = serializers.CharField()
+
+    def get_kematian(self, obj):
+        inst = SadKematian.objects.get(pk=obj["kematian_id"])
+        return SadKematianSuratSerializer(inst).data
+
+
+class AdminKeteranganAhliWarisTunggalSerializer(BaseAdminSuratSerializer):
+    atribut = AtributKeteranganAhliWaris()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "kaw_tunggal"
+
+
+class PendudukKeteranganAhliWarisTunggalSerializer(
+    BasePendudukSuratSerializer
+):
+    atribut = AtributKeteranganAhliWaris()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "kaw_tunggal"
+
+
+class AdminKeteranganAhliWarisNonTunggalSerializer(BaseAdminSuratSerializer):
+    atribut = AtributKeteranganAhliWaris()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "kaw_nontunggal"
+
+
+class PendudukKeteranganAhliWarisNonTunggalSerializer(
+    BasePendudukSuratSerializer
+):
+    atribut = AtributKeteranganAhliWaris()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "kaw_nontunggal"
+
+
+class AtributTidakMemilikiBantuanSosial(serializers.Serializer):
+    jenis_yang_tidak_dimiliki = serializers.ListField(
+        child=serializers.CharField(max_length=32)
+    )
+
+
+class AdminNoDanaSosialSerialzer(BaseAdminSuratSerializer):
+    atribut = AtributTidakMemilikiBantuanSosial()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "nds"
+
+
+class PendudukNoDanaSosialSerialzer(BasePendudukSuratSerializer):
+    atribut = AtributTidakMemilikiBantuanSosial()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "nds"
+
+
 serializer_list = {
+    "nds": (
+        AdminNoDanaSosialSerialzer,
+        PendudukNoDanaSosialSerialzer,
+        "Keterangan Tidak Memiliki Bantuan Sosial (Santunan Duka)",
+    ),
+    "kaw_nontunggal": (
+        AdminKeteranganAhliWarisNonTunggalSerializer,
+        PendudukKeteranganAhliWarisNonTunggalSerializer,
+        "Surat Keterangan Ahli Waris Non Tunggal (Santunan Duka)",
+    ),
+    "kaw_tunggal": (
+        AdminKeteranganAhliWarisTunggalSerializer,
+        PendudukKeteranganAhliWarisTunggalSerializer,
+        "Surat Keterangan Ahli Waris Tunggal (Santunan Duka)",
+    ),
     "perm_bri": (
         AdminPermohonanBRI,
         PendudukPermohonanBRI,
