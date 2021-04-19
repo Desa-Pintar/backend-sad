@@ -699,6 +699,7 @@ class PendudukSKTMKeluargaSerializer(BasePendudukSuratSerializer):
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "sktm_keluarga"
 
+
 class AtributBriPermohonan(serializers.Serializer):
     nama_ibu_kandung = serializers.CharField()
     agunan = serializers.CharField()
@@ -706,6 +707,7 @@ class AtributBriPermohonan(serializers.Serializer):
     ejaan = serializers.CharField()
     jangka_waktu = serializers.CharField()
     kegunaan = serializers.CharField()
+
 
 class AdminBriPermohonanSerializer(BaseAdminSuratSerializer):
     atribut = AtributBriPermohonan()
@@ -721,7 +723,46 @@ class PendudukBriPermohonanSerializer(BasePendudukSuratSerializer):
         jenis_surat = "bri_permohonan"
 
 
+class BRISuratKuasa(serializers.Serializer):
+    nama = serializers.CharField()
+    umur = serializers.IntegerField()
+    pekerjaan = serializers.CharField()
+    alamat = serializers.CharField()
+    objek_jaminan = serializers.CharField()
+
+
+class AtributSuratBRI(serializers.Serializer):
+    ibu_kandung = serializers.CharField()
+    bantuan_kalimat = serializers.CharField()
+    bantuan_angka = serializers.IntegerField()
+    jangka_waktu = serializers.IntegerField()
+    nama_usaha = serializers.CharField()
+    unit_bri = serializers.CharField()
+    lokasi_bri = serializers.CharField()
+    surat_kuasa = BRISuratKuasa(required=False)
+    daftar_lampiran = serializers.ListField(child=serializers.CharField())
+
+
+class AdminPermohonanBRI(BaseAdminSuratSerializer):
+    atribut = AtributSuratBRI()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "perm_bri"
+
+
+class PendudukPermohonanBRI(BasePendudukSuratSerializer):
+    atribut = AtributSuratBRI()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "perm_bri"
+
+
 serializer_list = {
+    "perm_bri": (
+        AdminPermohonanBRI,
+        PendudukPermohonanBRI,
+        "Permohonan Peminjaman BRI",
+    ),
     "sktm_keluarga": (
         AdminSKTMKeluargaSerializer,
         PendudukSKTMKeluargaSerializer,
