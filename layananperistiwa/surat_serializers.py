@@ -700,29 +700,6 @@ class PendudukSKTMKeluargaSerializer(BasePendudukSuratSerializer):
         jenis_surat = "sktm_keluarga"
 
 
-class AtributBriPermohonan(serializers.Serializer):
-    nama_ibu_kandung = serializers.CharField()
-    agunan = serializers.CharField()
-    nominal = serializers.CharField()
-    ejaan = serializers.CharField()
-    jangka_waktu = serializers.CharField()
-    kegunaan = serializers.CharField()
-
-
-class AdminBriPermohonanSerializer(BaseAdminSuratSerializer):
-    atribut = AtributBriPermohonan()
-
-    class Meta(BaseAdminSuratSerializer.Meta):
-        jenis_surat = "bri_permohonan"
-
-
-class PendudukBriPermohonanSerializer(BasePendudukSuratSerializer):
-    atribut = AtributBriPermohonan()
-
-    class Meta(BasePendudukSuratSerializer.Meta):
-        jenis_surat = "bri_permohonan"
-
-
 class BRISuratKuasa(serializers.Serializer):
     nama = serializers.CharField()
     umur = serializers.IntegerField()
@@ -965,10 +942,5 @@ serializer_list = {
         AdminUsahaSerializer,
         PendudukUsahaSerializer,
         "Surat Keterangan Usaha",
-    ),
-    "bri_permohonan": (
-        AdminBriPermohonanSerializer,
-        PendudukBriPermohonanSerializer,
-        "(BRI) Surat Permohonan",
     ),
 }
