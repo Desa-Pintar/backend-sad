@@ -69,7 +69,7 @@ def list_layanan_surat(request):
     data = {
         i: {
             "title": serializer_list[i][2],
-            "image": f"{schema}://{hostname}/media/layanan/{i}.webp",
+            "image": f"{schema}://{hostname}/media/layanan/{i}.png",
         }
         for i in serializer_list
     }
