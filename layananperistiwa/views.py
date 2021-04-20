@@ -64,7 +64,16 @@ from .surat_serializers import serializer_list, ListSuratSerializer
 
 @api_view()
 def list_layanan_surat(request):
-    data = {i: serializer_list[i][2] for i in serializer_list}
+    hostname = request.headers["Host"]
+    schema = "https" if request.is_secure() else "http"
+    data = {
+        i: {
+            "title": serializer_list[i][2],
+            "image": f"{schema}://{hostname}/media/layanan/{i}.webp",
+        }
+        for i in serializer_list
+    }
+
     return Response({"data": data})
 
 
