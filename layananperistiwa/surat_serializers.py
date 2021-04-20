@@ -796,6 +796,25 @@ class PendudukNoDanaSosialSerialzer(BasePendudukSuratSerializer):
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "nds"
 
+class AtributBukuNikah(serializers.Serializer):
+    menikah_dengan = serializers.CharField()
+    tgl_menikah = serializers.CharField()
+    alasan_hilang = serializers.CharField()
+
+
+class AdminBukuNikahSerializer(BaseAdminSuratSerializer):
+    atribut = AtributBukuNikah()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "bukunikah"
+
+
+class PendudukBukuNikahSerializer(BasePendudukSuratSerializer):
+    atribut = AtributBukuNikah()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "bukunikah"
+
 
 serializer_list = {
     "nds": (
@@ -942,5 +961,10 @@ serializer_list = {
         AdminUsahaSerializer,
         PendudukUsahaSerializer,
         "Surat Keterangan Usaha",
+    ),
+    "bukunikah": (
+        AdminBukuNikahSerializer,
+        PendudukBukuNikahSerializer,
+        "Surat Keterangan Buku Nikah Hilang",
     ),
 }
