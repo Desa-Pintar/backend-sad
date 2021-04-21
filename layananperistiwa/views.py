@@ -815,7 +815,7 @@ class SadPecahKKViewSet(CustomView):
     permission_classes = [IsAdminUserOrReadOnly]
 
     filter_backends = [filters.SearchFilter]
-    search_fields = ["keluarga", "penduduk"]
+    search_fields = ["keluarga__no_kk", "penduduk__nama"]
 
     def get_serializer_class(self):
         if self.action in ["update", "delete"]:
