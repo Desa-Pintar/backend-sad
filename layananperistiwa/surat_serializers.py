@@ -825,9 +825,8 @@ class AtributItemPemakaman(serializers.Serializer):
     keterangan = serializers.CharField(required=False)
     jumlah = serializers.SerializerMethodField()
 
-
-def get_jumlah(self, obj):
-    return obj["volume"] * obj["harga"]
+    def get_jumlah(self, obj):
+        return obj["volume"] * obj["harga"]
 
 
 class AtributPengeluaranPemakaman(serializers.Serializer):
