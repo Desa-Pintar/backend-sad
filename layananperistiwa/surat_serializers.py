@@ -816,15 +816,15 @@ class PendudukBukuNikahSerializer(BasePendudukSuratSerializer):
         jenis_surat = "bukunikah"
         
 class AtributItemPemakaman(serializers.Serializer):
-nama = serializers.CharField()
-volume = serializers.IntegerField(default=1)
-satuan = serializers.CharField()
-harga = serializers.IntegerField()
-keterangan = serializers.CharField(required=False)
-jumlah = serializers.SerializerMethodField()
+    nama = serializers.CharField()
+    volume = serializers.IntegerField(default=1)
+    satuan = serializers.CharField()
+    harga = serializers.IntegerField()
+    keterangan = serializers.CharField(required=False)
+    jumlah = serializers.SerializerMethodField()
 
-def get_jumlah(self, obj):
-    return obj["volume"] * obj["harga"]
+    def get_jumlah(self, obj):
+        return obj["volume"] * obj["harga"]
 
 
 class AtributPengeluaranPemakaman(serializers.Serializer):
