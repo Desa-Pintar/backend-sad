@@ -1119,6 +1119,12 @@ class PotensiViewSet(DynamicModelViewSet):
     serializer_class = PotensiSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    def destroy(self, request, pk, format=None):
+        data = self.get_object()
+        data.deleted_by = request.user
+        data.delete()
+        return Response({"data": {"status": "Data Sudah Terhapus"}})
+
     def get_queryset(self):
         kategori = self.request.query_params.get("kategori")
         if kategori:
