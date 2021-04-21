@@ -7,6 +7,10 @@ from django.utils import timezone
 from v1.models import SadDesa
 
 
+def thousand_delimiter(val):
+    return "{0:,}".format(val).replace(",", ".")
+
+
 def render_new_mail(mail_type, data):
     media_root = settings.MEDIA_ROOT
     template_folder = str(settings.BASE_DIR) + "/mail_templates"
@@ -23,6 +27,7 @@ def render_new_mail(mail_type, data):
         logo=logo_path,
         tanggal=timezone.now().strftime("%d %B %Y"),
         datetime=datetime,
+        thousand_delimiter=thousand_delimiter,
     )
 
     options = {"page-size": "A4"}

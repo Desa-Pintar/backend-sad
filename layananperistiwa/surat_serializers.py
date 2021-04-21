@@ -796,6 +796,7 @@ class PendudukNoDanaSosialSerialzer(BasePendudukSuratSerializer):
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "nds"
 
+
 class AtributBukuNikah(serializers.Serializer):
     menikah_dengan = serializers.CharField()
     tgl_menikah = serializers.CharField()
@@ -814,7 +815,8 @@ class PendudukBukuNikahSerializer(BasePendudukSuratSerializer):
 
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "bukunikah"
-        
+
+
 class AtributItemPemakaman(serializers.Serializer):
     nama = serializers.CharField()
     volume = serializers.IntegerField(default=1)
