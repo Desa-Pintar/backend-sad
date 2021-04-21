@@ -796,6 +796,7 @@ class PendudukNoDanaSosialSerialzer(BasePendudukSuratSerializer):
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "nds"
 
+
 class AtributBukuNikah(serializers.Serializer):
     menikah_dengan = serializers.CharField()
     tgl_menikah = serializers.CharField()
@@ -814,14 +815,16 @@ class PendudukBukuNikahSerializer(BasePendudukSuratSerializer):
 
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "bukunikah"
-        
+
+
 class AtributItemPemakaman(serializers.Serializer):
-nama = serializers.CharField()
-volume = serializers.IntegerField(default=1)
-satuan = serializers.CharField()
-harga = serializers.IntegerField()
-keterangan = serializers.CharField(required=False)
-jumlah = serializers.SerializerMethodField()
+    nama = serializers.CharField()
+    volume = serializers.IntegerField(default=1)
+    satuan = serializers.CharField()
+    harga = serializers.IntegerField()
+    keterangan = serializers.CharField(required=False)
+    jumlah = serializers.SerializerMethodField()
+
 
 def get_jumlah(self, obj):
     return obj["volume"] * obj["harga"]
@@ -851,7 +854,6 @@ class PendudukPengeluaranPemakamanSerializer(BasePendudukSuratSerializer):
 
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "biayapemakaman"
-
 
 
 serializer_list = {
