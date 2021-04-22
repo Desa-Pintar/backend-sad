@@ -816,7 +816,6 @@ class PendudukBukuNikahSerializer(BasePendudukSuratSerializer):
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "bukunikah"
 
-
 class AtributItemPemakaman(serializers.Serializer):
     nama = serializers.CharField()
     volume = serializers.IntegerField(default=1)
@@ -853,7 +852,6 @@ class PendudukPengeluaranPemakamanSerializer(BasePendudukSuratSerializer):
 
     class Meta(BasePendudukSuratSerializer.Meta):
         jenis_surat = "biayapemakaman"
-
 
 class PendudukPembagianWaris(serializers.Serializer):
     nama = serializers.CharField()
@@ -906,11 +904,17 @@ class PendudukPembagianWarisanSerializer(BasePendudukSuratSerializer):
         jenis_surat = "bagi_warisan"
 
 
+
 serializer_list = {
     "bagi_warisan": (
         AdminPembagianWarisanSerializer,
         PendudukPembagianWarisanSerializer,
         "Surat Pembagian Warisan",
+    ),
+    "biayapemakaman": (
+        AdminPengeluaranPemakamanSerializer,
+        PendudukPengeluaranPemakamanSerializer,
+        "Laporan Penggunaan Biaya Pemakaman",
     ),
     "nds": (
         AdminNoDanaSosialSerialzer,
