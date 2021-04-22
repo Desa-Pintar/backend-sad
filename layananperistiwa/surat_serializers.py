@@ -855,12 +855,62 @@ class PendudukPengeluaranPemakamanSerializer(BasePendudukSuratSerializer):
         jenis_surat = "biayapemakaman"
 
 
+class PendudukPembagianWaris(serializers.Serializer):
+    nama = serializers.CharField()
+    umur = serializers.IntegerField()
+
+
+class ItemJatahWarisan(serializers.Serializer):
+    nama = serializers.CharField()
+    keterangan = serializers.CharField(allow_blank=True)
+
+
+class PenjatahanItemWarisan(serializers.Serializer):
+    nama = serializers.CharField()
+    items = ItemJatahWarisan(many=True)
+
+
+class PembagianWarisanPasangan(serializers.Serializer):
+    nama = serializers.CharField()
+    tanggal_meninggal = serializers.CharField(allow_blank=True)
+
+
+class AtributPembagianWarisan(serializers.Serializer):
+    kematian_id = serializers.IntegerField()
+    pasangan = PembagianWarisanPasangan()
+    ahli_waris = PendudukPembagianWaris(many=True)
+    saksi = serializers.ListField(child=serializers.CharField())
+    item_warisan = serializers.ListField(child=serializers.CharField())
+    pembagian_warisan = PenjatahanItemWarisan(many=True)
+    tanggal_kesepakatan = serializers.CharField()
+    tempat_kesepakatan = serializers.CharField()
+
+    kematian = serializers.SerializerMethodField()
+
+    def get_kematian(self, obj):
+        inst = SadKematian.objects.get(pk=obj["kematian_id"])
+        return SadKematianSuratSerializer(inst).data
+
+
+class AdminPembagianWarisanSerializer(BaseAdminSuratSerializer):
+    atribut = AtributPembagianWarisan()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "bagi_warisan"
+
+
+class PendudukPembagianWarisanSerializer(BasePendudukSuratSerializer):
+    atribut = AtributPembagianWarisan()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "bagi_warisan"
+
 
 serializer_list = {
-    "biayapemakaman": (
-        AdminPengeluaranPemakamanSerializer,
-        PendudukPengeluaranPemakamanSerializer,
-        "Laporan Penggunaan Biaya Pemakaman",
+    "bagi_warisan": (
+        AdminPembagianWarisanSerializer,
+        PendudukPembagianWarisanSerializer,
+        "Surat Pembagian Warisan",
     ),
     "nds": (
         AdminNoDanaSosialSerialzer,
