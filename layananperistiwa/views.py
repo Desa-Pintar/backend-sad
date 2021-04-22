@@ -570,7 +570,7 @@ class LaporanKematianViewSet(DynamicModelViewSet):
 
 
 class SadKematianViewSet(CustomView):
-    queryset = SadKematian.objects.all().order_by("id")
+    queryset = SadKematian.objects.all().order_by("-id")
     serializer_class = SadKematianSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -623,7 +623,7 @@ class SadKematianViewSet(CustomView):
 
 
 class SadLahirmatiViewSet(CustomView):
-    queryset = SadLahirmati.objects.all().order_by("id")
+    queryset = SadLahirmati.objects.all().order_by("-id")
     serializer_class = SadLahirmatiSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -709,7 +709,7 @@ class StatusKKPindahViewSet(CustomView):
 
 
 class SadPindahKeluarViewSet(CustomView):
-    queryset = SadPindahKeluar.objects.all().order_by("id")
+    queryset = SadPindahKeluar.objects.all().order_by("-id")
     serializer_class = SadPindahKeluarSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -769,7 +769,7 @@ class SadPindahKeluarViewSet(CustomView):
 
 
 class SadPindahMasukViewSet(CustomView):
-    queryset = SadPindahMasuk.objects.all().order_by("id")
+    queryset = SadPindahMasuk.objects.all().order_by("-id")
     serializer_class = SadPindahMasukSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
@@ -810,7 +810,7 @@ class SadPindahMasukViewSet(CustomView):
 
 
 class SadPecahKKViewSet(CustomView):
-    queryset = SadPecahKK.objects.order_by("id")
+    queryset = SadPecahKK.objects.order_by("-id")
     serializer_class = SadPecahKKSerializer
     permission_classes = [IsAdminUserOrReadOnly]
 
