@@ -904,8 +904,105 @@ class PendudukPembagianWarisanSerializer(BasePendudukSuratSerializer):
         jenis_surat = "bagi_warisan"
 
 
+class PendudukPembagianWaris(serializers.Serializer):
+    nama = serializers.CharField()
+    umur = serializers.IntegerField()
+
+
+class ItemJatahWarisan(serializers.Serializer):
+    nama = serializers.CharField()
+    keterangan = serializers.CharField(allow_blank=True)
+
+
+class PenjatahanItemWarisan(serializers.Serializer):
+    nama = serializers.CharField()
+    items = ItemJatahWarisan(many=True)
+
+
+class PembagianWarisanPasangan(serializers.Serializer):
+    nama = serializers.CharField()
+    tanggal_meninggal = serializers.CharField(allow_blank=True)
+
+
+class AtributPembagianWarisan(serializers.Serializer):
+    kematian_id = serializers.IntegerField()
+    pasangan = PembagianWarisanPasangan()
+    ahli_waris = PendudukPembagianWaris(many=True)
+    saksi = serializers.ListField(child=serializers.CharField())
+    item_warisan = serializers.ListField(child=serializers.CharField())
+    pembagian_warisan = PenjatahanItemWarisan(many=True)
+    tanggal_kesepakatan = serializers.CharField()
+    tempat_kesepakatan = serializers.CharField()
+
+    kematian = serializers.SerializerMethodField()
+
+    def get_kematian(self, obj):
+        inst = SadKematian.objects.get(pk=obj["kematian_id"])
+        return SadKematianSuratSerializer(inst).data
+
+
+class AdminPembagianWarisanSerializer(BaseAdminSuratSerializer):
+    atribut = AtributPembagianWarisan()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "bagi_warisan"
+
+
+class PendudukPembagianWarisanSerializer(BasePendudukSuratSerializer):
+    atribut = AtributPembagianWarisan()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "bagi_warisan"
+
+
+class KeluargaMiskinAnggota(serializers.Serializer):
+    nama = serializers.CharField()
+    status_dalam_keluarga = serializers.CharField(allow_blank=True)
+    ttl = serializers.CharField()
+    nik = serializers.CharField()
+
+
+class AtributKeluargaMiskin(serializers.Serializer):
+    kematian_id = serializers.IntegerField()
+
+    kematian = serializers.SerializerMethodField()
+    keluarga = serializers.SerializerMethodField()
+
+    def get_kematian(self, obj):
+        inst = SadKematian.objects.get(pk=obj["kematian_id"])
+        return SadKematianSuratSerializer(inst).data
+
+    def get_keluarga(self, obj):
+        inst = SadKematian.objects.get(pk=obj["kematian_id"])
+        data_anggota = []
+        for item in inst.penduduk.keluarga.anggota.all():
+            item.ttl = (
+                f"{item.tempat_lahir}, {item.tgl_lahir.strftime('%d %B %Y')}"
+            )
+            data_anggota.append(KeluargaMiskinAnggota(item).data)
+        return data_anggota
+
+
+class AdminKeteranganKeluargaMiskin(BaseAdminSuratSerializer):
+    atribut = AtributKeluargaMiskin()
+
+    class Meta(BaseAdminSuratSerializer.Meta):
+        jenis_surat = "keluarga_miskin"
+
+
+class PendudukKeteranganKeluargaMiskin(BasePendudukSuratSerializer):
+    atribut = AtributKeluargaMiskin()
+
+    class Meta(BasePendudukSuratSerializer.Meta):
+        jenis_surat = "keluarga_miskin"
+
 
 serializer_list = {
+    "keluarga_miskin": (
+        AdminKeteranganKeluargaMiskin,
+        PendudukKeteranganKeluargaMiskin,
+        "Surat Keteranga Keluarga Miskin (Santunan Duka)",
+    ),
     "bagi_warisan": (
         AdminPembagianWarisanSerializer,
         PendudukPembagianWarisanSerializer,
