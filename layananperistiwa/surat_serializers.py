@@ -959,6 +959,11 @@ serializer_list = {
         PendudukPembagianWarisanSerializer,
         "Surat Pembagian Warisan",
     ),
+    "biayapemakaman": (
+        AdminPengeluaranPemakamanSerializer,
+        PendudukPengeluaranPemakamanSerializer,
+        "Laporan Penggunaan Biaya Pemakaman",
+    ),
     "nds": (
         AdminNoDanaSosialSerialzer,
         PendudukNoDanaSosialSerialzer,
