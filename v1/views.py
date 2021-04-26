@@ -1157,8 +1157,13 @@ class PotensiViewSet(DynamicModelViewSet):
         jenis_promosi = self.request.data["jenis_promosi"]
         # no_telp = self.request.data["no_telp"]
         # judul = self.request.data["judul"]
-        # isi = self.request.data["isi"]
+        isi = self.request.data["isi"]
         koordinat = f'{{"lat":{bidang.latitude},"lng":{bidang.longitude}}}'
+        luas = bidang.luas
+        status_hak = bidang.status_hak
+        penggunaan_tanah = bidang.penggunaan_tanah
+        pemanfaatan_tanah = bidang.pemanfaatan_tanah
+        rtrw = bidang.rtrw
         gambar = bidang.gambar_atas
 
         promosi = Potensi.objects.create(
@@ -1167,10 +1172,14 @@ class PotensiViewSet(DynamicModelViewSet):
             jenis_promosi=jenis_promosi,
             # no_telp=no_telp,
             # judul=judul,
-            # isi=isi,
+            isi=isi,
             koordinat=koordinat,
             gambar=gambar,
             kategori=kategori,
+            luas=luas,
+            penggunaan_tanah=penggunaan_tanah,
+            pemanfaatan_tanah=pemanfaatan_tanah,
+            rtrw=rtrw,
         )
 
         data = PotensiSerializer(promosi)
