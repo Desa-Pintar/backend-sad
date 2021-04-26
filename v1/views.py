@@ -1177,6 +1177,7 @@ class PotensiViewSet(DynamicModelViewSet):
             gambar=gambar,
             kategori=kategori,
             luas=luas,
+            status_hak=status_hak,
             penggunaan_tanah=penggunaan_tanah,
             pemanfaatan_tanah=pemanfaatan_tanah,
             rtrw=rtrw,
