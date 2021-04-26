@@ -641,6 +641,8 @@ class SigBidangViewSet(CustomView):
                 "luas": item["properties"]["Luas"][:5],
                 "longitude": item["properties"]["long"],
                 "latitude": item["properties"]["lat"],
+                "status_hak": item["properties"]["TIPEHAK"],
+                "penggunaan_tanah": item["properties"]["Penggunaan"],
                 "geometry": item["geometry"],
             }
             properties = item["properties"]
