@@ -896,6 +896,11 @@ class Potensi(models.Model):
     gambar = models.ImageField(
         upload_to=file_destination, blank=True, null=True
     )
+    luas = models.CharField(max_length=20, blank=True, null=True)
+    status_hak = models.CharField(max_length=50, blank=True, null=True)
+    penggunaan_tanah = models.CharField(max_length=100, blank=True, null=True)
+    pemanfaatan_tanah = models.CharField(max_length=100, blank=True, null=True)
+    rtrw = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
 
