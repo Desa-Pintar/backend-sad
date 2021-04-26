@@ -1159,12 +1159,12 @@ class PotensiViewSet(DynamicModelViewSet):
         # judul = self.request.data["judul"]
         isi = self.request.data["isi"]
         koordinat = f'{{"lat":{bidang.latitude},"lng":{bidang.longitude}}}'
-        luas = bidang.luas
-        status_hak = bidang.status_hak
-        penggunaan_tanah = bidang.penggunaan_tanah
-        pemanfaatan_tanah = bidang.pemanfaatan_tanah
-        rtrw = bidang.rtrw
-        gambar = bidang.gambar_atas
+        luas = bidang.luas if bidang.luas else ""
+        status_hak = bidang.status_hak if bidang.status_hak else ""
+        penggunaan_tanah = bidang.penggunaan_tanah if bidang.penggunaan_tanah else ""
+        pemanfaatan_tanah = bidang.pemanfaatan_tanah if bidang.pemanfaatan_tanah else ""
+        rtrw = bidang.rtrw if bidang.rtrw else ""
+        gambar = bidang.gambar_atas if bidang.gambar_atas else ""
 
         promosi = Potensi.objects.create(
             nama_usaha=nama_usaha,
