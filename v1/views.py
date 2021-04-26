@@ -1165,7 +1165,7 @@ class PotensiViewSet(DynamicModelViewSet):
         pemanfaatan_tanah = bidang.pemanfaatan_tanah if bidang.pemanfaatan_tanah else ""
         rtrw = bidang.rtrw if bidang.rtrw else ""
         gambar = bidang.gambar_atas if bidang.gambar_atas else ""
-
+        
         promosi = Potensi.objects.create(
             nama_usaha=nama_usaha,
             harga=harga,
