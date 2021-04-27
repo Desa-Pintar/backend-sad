@@ -575,7 +575,7 @@ class SadKematianViewSet(CustomView):
     permission_classes = [IsAdminUserOrReadOnly]
 
     filter_backends = [filters.SearchFilter]
-    search_fields = ["nama", "sebab_kematian"]
+    search_fields = ["penduduk__nama", "sebab_kematian"]
 
     @action(detail=False, methods=["get"])
     def ekspor(self, request):
