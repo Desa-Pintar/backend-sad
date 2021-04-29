@@ -95,7 +95,6 @@ class PegawaiViewSet(CustomView):
         ] = 'attachment; filename="DataPerangkat.xlsx"'
         return response
 
-
     def transform(self, data):
         return {
             "nama": data["nama"],
@@ -291,7 +290,7 @@ class SadKeluargaViewSet(DynamicModelViewSet):
             except IntegrityError:
                 status["data_redundan"] += 1
                 continue
-            except Exception as e:
+            except Exception:
                 status["data_gagal"] += 1
                 continue
             status["data_diinput"] += 1
@@ -346,8 +345,12 @@ class SadPendudukViewSet(CustomView):
     def get_queryset(self):
         keluarga = self.request.query_params.get("keluarga")
         if keluarga:
-            return SadPenduduk.objects.filter(keluarga_id=keluarga).all()
-        return SadPenduduk.objects.all()
+            return (
+                SadPenduduk.objects.filter(keluarga_id=keluarga)
+                .all()
+                .order_by("id")
+            )
+        return SadPenduduk.objects.all().order_by("id")
 
     @action(detail=False, methods=["post"])
     def upload(self, request):
@@ -592,7 +595,7 @@ class SigBidangViewSet(CustomView):
         payload = {"id": user.id, "username": user.username}
 
         if hasattr(user, "profile"):
-            kepemilikan = user.profile.kepemilikanwarga_set.all()
+            kepemilikan_s = user.profile.kepemilikanwarga_set.all()
             payload["kepemilikan"] = [
                 {
                     "bidang": i.bidang.id,
@@ -618,7 +621,8 @@ class SigBidangViewSet(CustomView):
                     "geometry": i.bidang.geometry,
                     "namabidang": i.namabidang,
                 }
-                for i in kepemilikan
+                for i in kepemilikan_s
+                if i.bidang.deleted_at is None
             ]
 
             penguasaan = user.profile.keluarga.menguasai
@@ -1161,11 +1165,14 @@ class PotensiViewSet(DynamicModelViewSet):
         koordinat = f'{{"lat":{bidang.latitude},"lng":{bidang.longitude}}}'
         luas = bidang.luas if bidang.luas else ""
         status_hak = bidang.status_hak if bidang.status_hak else ""
-        penggunaan_tanah = bidang.penggunaan_tanah if bidang.penggunaan_tanah else ""
-        pemanfaatan_tanah = bidang.pemanfaatan_tanah if bidang.pemanfaatan_tanah else ""
+        penggunaan_tanah = (
+            bidang.penggunaan_tanah if bidang.penggunaan_tanah else ""
+        )
+        pemanfaatan_tanah = (
+            bidang.pemanfaatan_tanah if bidang.pemanfaatan_tanah else ""
+        )
         rtrw = bidang.rtrw if bidang.rtrw else ""
         gambar = bidang.gambar_atas if bidang.gambar_atas else ""
-        
         promosi = Potensi.objects.create(
             nama_usaha=nama_usaha,
             harga=harga,
